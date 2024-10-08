@@ -22,11 +22,20 @@
 ----------------------------------------------------------------------*/
 %option yylineno
 
+/*  Subsección de definiciones */
+
 delimitador     [ \t\n]+
 digito          [0-9]
 entero          {digito}+
 
 %%
+
+/* Sección de reglas, patrón - acción 
+    Para mostrar el lexema renoconido por una regla se puede mostrar la
+    variable de Flex yytex en la acción.
+  Si una secuencia casa con un patrón, se escoge la secuencia más larga.
+  Si tienen la misma longitud, se coge la primera.
+*/
 
 {delimitador}   {if (verbosidad) ECHO ; }
 "+"		 		{ retornar (MAS_) ; }
@@ -40,6 +49,14 @@ entero          {digito}+
 
 %%
 int verbosidad = FALSE; 
+
+/* Sección de funciones de usuario 
+    Si se utiliza alguna función en la sección de reglas, hay que 
+    incluir la cabecera en el preámbulo C de la sección de definiciones.
+    Debe haber una función main. También se puede escribir en un fichero
+    a parte pero haría falta añadir el nombre del fichero en la orden
+    de llamada para que el compilador.
+*/
 
 /*****************************************************************************/
 void yyerror(const char *msg){
