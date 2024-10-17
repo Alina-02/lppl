@@ -7,7 +7,9 @@
 
 //Declaraciones en Bison
 
-%token <valor> ID CTE TRUE FALSE INT BOOL RETURN READ PRINT IF FOR
+%token ID_ CTE_ TRUE_ FALSE_ INT_ BOOL_ RETURN_ READ_ PRINT_ IF_ FOR_
+%token IGUAL_ PUNTOYCOMA_ ABRECORCHETE_ CIERRACORCHETE_ ABREPARENTESIS_ CIERRAPARENTESIS_
+%token ABRELLAVE_ CIERRALLAVE_ AND_ OR_ DIF_ MENQ_ MAYQ_ SUM_ RES_ MULT_ DIV_ COMA_
 
 // Sección de reglas gramaticales
 
@@ -23,32 +25,32 @@ decla : declaVar
     | declaFunc
     ;
 
-declaVar : tipoSimp ID ;
-    | tipoSimp ID = const ;
-    | tipoSimp ID [ CTE ] ;
+declaVar : tipoSimp ID_ PUNTOYCOMA_
+    | tipoSimp ID_ IGUAL_ const PUNTOYCOMA_
+    | tipoSimp ID_ ABRECORCHETE_ CTE_ CIERRACORCHETE_ PUNTOYCOMA_
     ;
 
-const : CTE
-    | TRUE
-    | FALSE
+const : CTE_
+    | TRUE_
+    | FALSE_
     ;
 
-tipoSimp : INT
-    | BOOL
+tipoSimp : INT_
+    | BOOL_
     ;
 
-declaFunc : tipoSimp ID ( paramForm ) bloque
+declaFunc : tipoSimp ID_ ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ bloque
     ;
 
 paramForm : 
     | listParamForm
     ;
 
-listParamForm : tipoSimp ID 
-    | tipoSimp ID , listParamForm
+listParamForm : tipoSimp ID_ 
+    | tipoSimp ID_ COMA_ listParamForm
     ;
 
-bloque : { declaVarLocal listInst RETURN expre ; }
+bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_
     ;
 
 declaVarLocal : 
@@ -59,25 +61,25 @@ listInst :
     | listInst inst 
     ;
 
-inst : { listInst }
+inst : ABRELLAVE_ listInst CIERRALLAVE_
     | instExpre
     | instEntSal
     | instSelec
     | instIter
     ;
 
-instExpre : expre ;
-    | ;
+instExpre : expre PUNTOYCOMA_
+    | PUNTOYCOMA_
     ;
 
-instEntSal : READ ( ID ) ;
-    | PRINT ( expre ) ;
+instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_
+    | PRINT_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ PUNTOYCOMA_
     ;
 
-instSelec : IF ( expre ) inst ELSE inst
+instSelec : IF_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ inst ELSE_ inst
     ;
 
-instIter : FOR ( expreOP ; expre ; expreOP) inst
+instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst
     ;
 
 expreOP : 
@@ -85,8 +87,8 @@ expreOP :
     ;
 
 expre : expreLogic 
-    | ID = expre
-    | ID [ expre ] = expre
+    | ID_ IGUAL_ expre
+    | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ IGUAL_ expre
     ;
 
 expreLogic : expreIgual
@@ -114,10 +116,10 @@ expreUna : expreSufi
     ;
 
 expreSufi : const 
-    | ( expre )
-    | ID
-    | ID [ expre ]
-    | ID ( paramAct )
+    | ABREPARENTESIS_ expre CIERRAPARENTESIS_
+    | ID_
+    | ID_ ABRECORCHETE_ expre CIERRACORCHETE_
+    | ID_ ABREPARENTESIS_ paramAct CIERRAPARENTESIS_
     ;
 
 paramAct : 
@@ -125,34 +127,34 @@ paramAct :
     ;
 
 listParamAct : expre
-    | expre , listParamAct
+    | expre COMA_ listParamAct
     ;
 
-opLogic : &&
-    | ||
+opLogic : AND_ AND_
+    | OR_ OR_
     ;
 
-opIgual : ==
-    | !=
+opIgual : IGUAL_ IGUAL_
+    | DIF_ IGUAL_
     ;
 
-opRel : >
-    | <
-    | >=
-    | <=
+opRel : MAYQ_
+    | MENQ_
+    | MAYQ_ IGUAL_
+    | MENQ_ IGUAL_
     ;
 
-opAd : +
-    | -
+opAd : SUM_
+    | RES_
     ;
 
-opMul : *
-    | /
+opMul : MULT_
+    | DIV_
     ;
 
-opUna : +
-    | -
-    | !
+opUna : SUM_
+    | RES_
+    | DIF_
     ;
 
 %%

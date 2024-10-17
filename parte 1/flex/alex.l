@@ -27,6 +27,10 @@
 delimitador     [ \t\n]+
 digito          [0-9]
 entero          {digito}+
+letra           [a-zA-Z]
+constante       {entero} | .{entero} | {entero}. | {entero}.{entero}
+identificador   {letra}({letra}|{digito}|_)*
+comentario      \/\/.*
 
 %%
 
@@ -38,13 +42,35 @@ entero          {digito}+
 */
 
 {delimitador}   {if (verbosidad) ECHO ; }
-"+"		 		{ retornar (MAS_) ; }
-"-"             { retornar (MENOS_) ; }
-"*"             { retornar (POR_) ; }
-"/"             { retornar (DIV_) ; }
-"("             { retornar (OPAR_) ; }
-")"             { retornar (DIV_) ; }
-{entero}        { retornar (CTE_) ; }
+"true"	 		    {if (verbosidad) ECHO ; retornar (TRUE_) ; }
+"false"	 		      {if (verbosidad) ECHO ; retornar (FALSE_) ; }
+"int"	 		      {if (verbosidad) ECHO ; retornar (INT_) ; }
+"read"	 		      {if (verbosidad) ECHO ; retornar (READ_) ; }
+"for"	 		      {if (verbosidad) ECHO ; retornar (FOR_) ; }
+"if"	 		      {if (verbosidad) ECHO ; retornar (IF_) ; }
+"print"	 		      {if (verbosidad) ECHO ; retornar (PRINT_) ; }
+"bool"	 		      {if (verbosidad) ECHO ; retornar (BOOL_) ; }
+{identificador}	 		      {if (verbosidad) ECHO ; retornar (ID_) ; }
+
+"&"	 		      {if (verbosidad) ECHO ; retornar (AND_) ; }
+"|"	 		      {if (verbosidad) ECHO ; retornar (OR_) ; }
+"<"	 		      {if (verbosidad) ECHO ; retornar (MENQ_) ; }
+">"	 		      {if (verbosidad) ECHO ; retornar (MAYQ_) ; }
+","	 		      {if (verbosidad) ECHO ; retornar (COMA_) ; }
+";"	 		      {if (verbosidad) ECHO ; retornar (PUNTOYCOMA_) ; }
+"{"	 		      {if (verbosidad) ECHO ; retornar (ABRELLAVE_) ; }
+"}"	 		      {if (verbosidad) ECHO ; retornar (CIERRALLAVE_) ; }
+"["	 		      {if (verbosidad) ECHO ; retornar (ABRECORCHETE_) ; }
+"]"	 		      {if (verbosidad) ECHO ; retornar (CIERRACORCHETE_) ; }
+"!"	 		      {if (verbosidad) ECHO ; retornar (DIF_) ; }
+"="	 		      {if (verbosidad) ECHO ; retornar (IGUAL_) ; }
+"+"		 		      {if (verbosidad) ECHO ; retornar (SUM_) ; }
+"-"             {if (verbosidad) ECHO ; retornar (RES_) ; }
+"*"             {if (verbosidad) ECHO ; retornar (MULT_) ; }
+"/"             {if (verbosidad) ECHO ; retornar (DIV_) ; }
+"("             {if (verbosidad) ECHO ; retornar (ABREPARENTESIS_) ; }
+")"             {if (verbosidad) ECHO ; retornar (CIERRAPARENTESIS_) ; }
+{entero}        {if (verbosidad) ECHO ; retornar (CTE_) ; }
 .				{ yyerror("Caracter desconocido") ;}
 
 %%
