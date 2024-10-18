@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "header.h"
+#include "bison.tab.h"
 
 #define  retornar(x) {if (verbosidad) ECHO;}
 
@@ -34,12 +35,8 @@ comentario      \/\/.*
 
 %%
 
-/* Sección de reglas, patrón - acción 
-    Para mostrar el lexema renoconido por una regla se puede mostrar la
-    variable de Flex yytex en la acción.
-  Si una secuencia casa con un patrón, se escoge la secuencia más larga.
-  Si tienen la misma longitud, se coge la primera.
-*/
+
+
 
 {delimitador}   {if (verbosidad) ECHO ; }
 "true"	 		    {if (verbosidad) ECHO ; retornar (TRUE_) ; }
@@ -51,9 +48,11 @@ comentario      \/\/.*
 "print"	 		      {if (verbosidad) ECHO ; retornar (PRINT_) ; }
 "bool"	 		      {if (verbosidad) ECHO ; retornar (BOOL_) ; }
 {identificador}	 		      {if (verbosidad) ECHO ; retornar (ID_) ; }
+{comentario}       {if(verbosidad) ECHO ;}
 
-"&"	 		      {if (verbosidad) ECHO ; retornar (AND_) ; }
-"|"	 		      {if (verbosidad) ECHO ; retornar (OR_) ; }
+"=="            {if (verbosidad) ECHO ; retornar (IGUALCOMPARAR_) ; }
+"&&"	 		      {if (verbosidad) ECHO ; retornar (AND_) ; }
+"||"	 		      {if (verbosidad) ECHO ; retornar (OR_) ; }
 "<"	 		      {if (verbosidad) ECHO ; retornar (MENQ_) ; }
 ">"	 		      {if (verbosidad) ECHO ; retornar (MAYQ_) ; }
 ","	 		      {if (verbosidad) ECHO ; retornar (COMA_) ; }
@@ -63,7 +62,7 @@ comentario      \/\/.*
 "["	 		      {if (verbosidad) ECHO ; retornar (ABRECORCHETE_) ; }
 "]"	 		      {if (verbosidad) ECHO ; retornar (CIERRACORCHETE_) ; }
 "!"	 		      {if (verbosidad) ECHO ; retornar (DIF_) ; }
-"="	 		      {if (verbosidad) ECHO ; retornar (IGUAL_) ; }
+"="	 		      {if (verbosidad) ECHO ; retornar (IGUALVARIABLE_) ; }
 "+"		 		      {if (verbosidad) ECHO ; retornar (SUM_) ; }
 "-"             {if (verbosidad) ECHO ; retornar (RES_) ; }
 "*"             {if (verbosidad) ECHO ; retornar (MULT_) ; }
