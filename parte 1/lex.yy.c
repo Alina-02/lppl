@@ -1,6 +1,5 @@
-#line 2 "lex.c"
 
-#line 4 "lex.c"
+#line 3 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -507,20 +506,19 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "flex/alex.l"
+#line 1 "alex.l"
 /*****************************************************************************/
 /**  Ejemplo de FLEX: S E M - 1             2018-2019 <jbenedi@dsic.upv.es> **/
 /**  V. 20                                                                  **/
 /*****************************************************************************/
-#line 6 "flex/alex.l"
+#line 6 "alex.l"
 #include <stdio.h>
-#include <string.h>
 #include "header.h"
 #include "bison.tab.h"
 
 #define  retornar(x) {if (verbosidad) ECHO;}
 
-#line 524 "lex.c"
+#line 522 "lex.yy.c"
 /*----------------------------------------------------------------------
   Dado que las funciones "input()" y "unput(c)" son costosas y no las
   utilizaremos, evitaremos que se generen automaticamente sus rutinas
@@ -531,7 +529,7 @@ char *yytext;
   Para mantener el numero de linea actual en la variable global yylineno
 ----------------------------------------------------------------------*/
 /*  Subsección de definiciones */
-#line 535 "lex.c"
+#line 533 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -746,13 +744,13 @@ YY_DECL
 		}
 
 	{
-#line 36 "flex/alex.l"
+#line 35 "alex.l"
 
 
 
 
 
-#line 756 "lex.c"
+#line 754 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -822,170 +820,170 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 41 "flex/alex.l"
+#line 40 "alex.l"
 {if (verbosidad) ECHO ; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 42 "flex/alex.l"
+#line 41 "alex.l"
 {if (verbosidad) ECHO ; retornar (TRUE_) ; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 43 "flex/alex.l"
+#line 42 "alex.l"
 {if (verbosidad) ECHO ; retornar (FALSE_) ; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 44 "flex/alex.l"
+#line 43 "alex.l"
 {if (verbosidad) ECHO ; retornar (INT_) ; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 45 "flex/alex.l"
+#line 44 "alex.l"
 {if (verbosidad) ECHO ; retornar (READ_) ; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 46 "flex/alex.l"
+#line 45 "alex.l"
 {if (verbosidad) ECHO ; retornar (FOR_) ; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 47 "flex/alex.l"
+#line 46 "alex.l"
 {if (verbosidad) ECHO ; retornar (IF_) ; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 48 "flex/alex.l"
+#line 47 "alex.l"
 {if (verbosidad) ECHO ; retornar (PRINT_) ; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 49 "flex/alex.l"
+#line 48 "alex.l"
 {if (verbosidad) ECHO ; retornar (BOOL_) ; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 50 "flex/alex.l"
+#line 49 "alex.l"
 {if (verbosidad) ECHO ; retornar (ID_) ; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 51 "flex/alex.l"
+#line 50 "alex.l"
 {if(verbosidad) ECHO ;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 53 "flex/alex.l"
+#line 52 "alex.l"
 {if (verbosidad) ECHO ; retornar (IGUALCOMPARAR_) ; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 54 "flex/alex.l"
+#line 53 "alex.l"
 {if (verbosidad) ECHO ; retornar (AND_) ; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 55 "flex/alex.l"
+#line 54 "alex.l"
 {if (verbosidad) ECHO ; retornar (OR_) ; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 56 "flex/alex.l"
+#line 55 "alex.l"
 {if (verbosidad) ECHO ; retornar (MENQ_) ; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 57 "flex/alex.l"
+#line 56 "alex.l"
 {if (verbosidad) ECHO ; retornar (MAYQ_) ; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 58 "flex/alex.l"
+#line 57 "alex.l"
 {if (verbosidad) ECHO ; retornar (COMA_) ; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 59 "flex/alex.l"
+#line 58 "alex.l"
 {if (verbosidad) ECHO ; retornar (PUNTOYCOMA_) ; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 60 "flex/alex.l"
+#line 59 "alex.l"
 {if (verbosidad) ECHO ; retornar (ABRELLAVE_) ; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 61 "flex/alex.l"
+#line 60 "alex.l"
 {if (verbosidad) ECHO ; retornar (CIERRALLAVE_) ; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 62 "flex/alex.l"
+#line 61 "alex.l"
 {if (verbosidad) ECHO ; retornar (ABRECORCHETE_) ; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 63 "flex/alex.l"
+#line 62 "alex.l"
 {if (verbosidad) ECHO ; retornar (CIERRACORCHETE_) ; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 64 "flex/alex.l"
+#line 63 "alex.l"
 {if (verbosidad) ECHO ; retornar (DIF_) ; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 65 "flex/alex.l"
+#line 64 "alex.l"
 {if (verbosidad) ECHO ; retornar (IGUALVARIABLE_) ; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 66 "flex/alex.l"
+#line 65 "alex.l"
 {if (verbosidad) ECHO ; retornar (SUM_) ; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 67 "flex/alex.l"
+#line 66 "alex.l"
 {if (verbosidad) ECHO ; retornar (RES_) ; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 68 "flex/alex.l"
+#line 67 "alex.l"
 {if (verbosidad) ECHO ; retornar (MULT_) ; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 69 "flex/alex.l"
+#line 68 "alex.l"
 {if (verbosidad) ECHO ; retornar (DIV_) ; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 70 "flex/alex.l"
+#line 69 "alex.l"
 {if (verbosidad) ECHO ; retornar (ABREPARENTESIS_) ; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 71 "flex/alex.l"
+#line 70 "alex.l"
 {if (verbosidad) ECHO ; retornar (CIERRAPARENTESIS_) ; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 72 "flex/alex.l"
+#line 71 "alex.l"
 {if (verbosidad) ECHO ; retornar (CTE_) ; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 73 "flex/alex.l"
+#line 72 "alex.l"
 { yyerror("Caracter desconocido") ;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 75 "flex/alex.l"
+#line 74 "alex.l"
 ECHO;
 	YY_BREAK
-#line 989 "lex.c"
+#line 987 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1961,38 +1959,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 75 "flex/alex.l"
+#line 74 "alex.l"
 
-int verbosidad = FALSE; 
-
-/* Sección de funciones de usuario 
-    Si se utiliza alguna función en la sección de reglas, hay que 
-    incluir la cabecera en el preámbulo C de la sección de definiciones.
-    Debe haber una función main. También se puede escribir en un fichero
-    a parte pero haría falta añadir el nombre del fichero en la orden
-    de llamada para que el compilador.
-*/
-
-/*****************************************************************************/
-void yyerror(const char *msg){
-/*  Tratamiento de errores.                                                  */
-  fprintf(stderr, "\nError en la linea %d: %s\n", yylineno, msg);
-}
-
-/*****************************************************************************/
-int main(int argc, char **argv) {
-	int i, n=1 ;
-
-	for (i=1; i<argc; ++i)
-      if (strcmp(argv[i], "-v")==0) { verbosidad = TRUE; n++; }
-	if (argc == n+1)
-      if ((yyin = fopen (argv[n], "r")) == NULL)
-      	fprintf (stderr, "El fichero '%s' no es valido\n", argv[n]) ;     
-      else yylex ();
-	else fprintf (stderr, "Uso: cmc [-v] fichero\n");
-
-	return (0);
-} 
-
-/*****************************************************************************/
 
