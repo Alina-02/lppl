@@ -24,7 +24,7 @@
 
 /*  Subsección de definiciones */
 
-delimitador     [ \t\n]+
+delimitador     [ \t]+
 digito          [0-9]
 entero          {digito}+
 letra           [a-zA-Z]
@@ -36,7 +36,7 @@ comentario      \/\/.*
 
 
 
-
+"\n"            {if (verbosidad) ECHO ; yylineno()}
 {delimitador}   {if (verbosidad) ECHO ; }
 "true"	 		    {if (verbosidad) ECHO ; retornar (TRUE_) ; }
 "false"	 		      {if (verbosidad) ECHO ; retornar (FALSE_) ; }
