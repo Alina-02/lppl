@@ -7,7 +7,7 @@
 #include "header.h"
 #include "bison.tab.h"
 
-#define  retornar(x) {return(x);}
+#define  retornar(x) {if (verbosidad) ECHO; return(x);}
 
 %}
 /*----------------------------------------------------------------------
@@ -40,46 +40,46 @@ comentario      \/\/.*
 {delimitador}   {if (verbosidad) ECHO ; }
 
 
-"true"	 		    {if (verbosidad) ECHO ; retornar (TRUE_) ; }
-"false"	 		      {if (verbosidad) ECHO ; retornar (FALSE_) ; }
-"int"	 		      {if (verbosidad) ECHO ; retornar (INT_) ; }
-"read"	 		      {if (verbosidad) ECHO ; retornar (READ_) ; }
-"for"	 		      {if (verbosidad) ECHO ; retornar (FOR_) ; }
-"if"	 		      {if (verbosidad) ECHO ; retornar (IF_) ; }
-"else"          {if (verbosidad) ECHO ; retornar (ELSE_) ;}
-"print"	 		      {if (verbosidad) ECHO ; retornar (PRINT_) ; }
-"bool"	 		      {if (verbosidad) ECHO ; retornar (BOOL_) ; }
-"return"        {if (verbosidad) ECHO ; retornar (RETURN_) ; }
+"true"	 		    {retornar (TRUE_) ; }
+"false"	 		    {retornar (FALSE_) ; }
+"int"	 		      {retornar (INT_) ; }
+"read"	 		    {retornar (READ_) ; }
+"for"	 		      {retornar (FOR_) ; }
+"if"	 		      {retornar (IF_) ; }
+"else"          {retornar (ELSE_) ;}
+"print"	 		    {retornar (PRINT_) ; }
+"bool"	 		    {retornar (BOOL_) ; }
+"return"        {retornar (RETURN_) ; }
 
 
-"="	 		      {if (verbosidad) ECHO ; retornar (IGUALVARIABLE_) ; }
-"=="            {if (verbosidad) ECHO ; retornar (IGUALCOMPARAR_) ; }
-"!="            {if (verbosidad) ECHO; retornar (DIFCOMPARAR_) ; }
-"&&"	 		      {if (verbosidad) ECHO ; retornar (AND_) ; }
-"||"	 		      {if (verbosidad) ECHO ; retornar (OR_) ; }
-"<"	 		      {if (verbosidad) ECHO ; retornar (MENQ_) ; }
-"<="          {if (verbosidad) ECHO ; retornar (MENIGUQ_) ;}
-">"	 		      {if (verbosidad) ECHO ; retornar (MAYQ_) ; }
-">="          {if (verbosidad) ECHO ; retornar (MAYIGUQ_) ;}
-","	 		      {if (verbosidad) ECHO ; retornar (COMA_) ; }
-";"	 		      {if (verbosidad) ECHO ; retornar (PUNTOYCOMA_) ; }
-"{"	 		      {if (verbosidad) ECHO ; retornar (ABRELLAVE_) ; }
-"}"	 		      {if (verbosidad) ECHO ; retornar (CIERRALLAVE_) ; }
-"["	 		      {if (verbosidad) ECHO ; retornar (ABRECORCHETE_) ; }
-"]"	 		      {if (verbosidad) ECHO ; retornar (CIERRACORCHETE_) ; }
-"!"	 		      {if (verbosidad) ECHO ; retornar (DIF_) ; }
-"+"		 		      {if (verbosidad) ECHO ; retornar (SUM_) ; }
-"-"             {if (verbosidad) ECHO ; retornar (RES_) ; }
-"*"             {if (verbosidad) ECHO ; retornar (MULT_) ; }
-"/"             {if (verbosidad) ECHO ; retornar (DIV_) ; }
-"("             {if (verbosidad) ECHO ; retornar (ABREPARENTESIS_) ; }
-")"             {if (verbosidad) ECHO ; retornar (CIERRAPARENTESIS_) ; }
+"="	 		      {retornar (IGUALVARIABLE_) ; }
+"=="          {retornar (IGUALCOMPARAR_) ; }
+"!="          {retornar (DIFCOMPARAR_) ; }
+"&&"	 		    {retornar (AND_) ; }
+"||"	 		    {retornar (OR_) ; }
+"<"	 		      {retornar (MENQ_) ; }
+"<="          {retornar (MENIGUQ_) ;}
+">"	 		      {retornar (MAYQ_) ; }
+">="          {retornar (MAYIGUQ_) ;}
+","	 		      {retornar (COMA_) ; }
+";"	 		      {retornar (PUNTOYCOMA_) ; }
+"{"	 		      {retornar (ABRELLAVE_) ; }
+"}"	 		      {retornar (CIERRALLAVE_) ; }
+"["	 		      {retornar (ABRECORCHETE_) ; }
+"]"	 		      {retornar (CIERRACORCHETE_) ; }
+"!"	 		      {retornar (DIF_) ; }
+"+"		 		    {retornar (SUM_) ; }
+"-"           {retornar (RES_) ; }
+"*"           {retornar (MULT_) ; }
+"/"           {retornar (DIV_) ; }
+"("           {retornar (ABREPARENTESIS_) ; }
+")"           {retornar (CIERRAPARENTESIS_) ; }
 
 
-{constante}        {if (verbosidad) ECHO ; yylval.cent = atoy(yytext); retornar (CTE_) ; }
-{identificador}	 		      {if (verbosidad) ECHO; yylval.ident = strdup(yytext); retornar (ID_) ; }
+{constante}        {yylval.cent = atoy(yytext); retornar (CTE_) ; }
+{identificador}	 	 {yylval.ident = strdup(yytext); retornar (ID_) ; }
 {comentario}       {if(verbosidad) ECHO ;}
 
-.				{ yyerror("Caracter desconocido") ;}
+.				           { yyerror("Caracter desconocido") ;}
 
 %%
