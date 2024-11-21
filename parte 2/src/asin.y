@@ -35,7 +35,13 @@ decla : declaVar
     | declaFunc
     ;
 
-declaVar : tipoSimp ID_ PUNTOYCOMA_
+declaVar : tipoSimp ID_ PUNTOYCOMA_ {
+                                    if(!insTdS($2, VARIABLE, $1, niv, dvar, -1)) 
+                                        yyerror("Identificador repetido.");
+                                    else    
+                                        dvar += TALLA_TIPO_SIMPLE;
+                                    }
+                                    ;
     | tipoSimp ID_ IGUALVARIABLE_ const PUNTOYCOMA_
     | tipoSimp ID_ ABRECORCHETE_ CTE_ CIERRACORCHETE_ PUNTOYCOMA_
     ;
@@ -50,6 +56,13 @@ tipoSimp : INT_
     ;
 
 declaFunc : tipoSimp ID_ ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ bloque
+                {
+                    if(!insTdS($2, FUNCION, $1, niv, -1, -1))
+                        yyerror("Función repetida");
+                    cargaContexto(niv + 1);
+                    $6;
+                    descargaContexto(niv + 1);
+                }
     ;
 
 paramForm : 

@@ -76,7 +76,7 @@ comentario      \/\/.*
 ")"           {retornar (CIERRAPARENTESIS_) ; }
 
 
-{constante}        {yylval.cent = atoy(yytext); retornar (CTE_) ; }
+{constante}        {yylval.cent = (int) atoy(yytext); retornar (CTE_) ; }
 {identificador}	 	 {yylval.ident = strdup(yytext); retornar (ID_) ; }
 {comentario}       {if(verbosidad) ECHO ;}
 
