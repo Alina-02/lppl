@@ -3,18 +3,20 @@
 %{
     #include <stdio.h>
     #include "header.h"
+    #include "libtds.h"
 %}
 
 //Declaraciones en Bison
 
-%token ID_ CTE_ TRUE_ FALSE_ INT_ BOOL_ RETURN_ READ_ PRINT_ IF_ FOR_
+%token ID_ INT_ BOOL_ RETURN_ READ_ PRINT_ IF_ FOR_
 %token IGUALVARIABLE_ PUNTOYCOMA_ ABRECORCHETE_ CIERRACORCHETE_ ABREPARENTESIS_ CIERRAPARENTESIS_
 %token ABRELLAVE_ CIERRALLAVE_ AND_ OR_ DIF_ MENQ_ MAYQ_ SUM_ RES_ MULT_ DIV_ COMA_ IGUALCOMPARAR_
 %token ELSE_ MENIGUQ_ MAYIGUQ_ DIFCOMPARAR_ 
-
+%token <const> CTE_ TRUE_ FALSE_
+%type <const> const
 %union{
-    int cent;
-    chat *ident;
+    int t;
+    char *ident;
 }
 
 // Sección de reglas gramaticales
@@ -46,9 +48,9 @@ declaVar : tipoSimp ID_ PUNTOYCOMA_ {
     | tipoSimp ID_ ABRECORCHETE_ CTE_ CIERRACORCHETE_ PUNTOYCOMA_
     ;
 
-const : CTE_ {$$.tipo = T_ENTERO;}
-    | TRUE_ {$$.tipo = T_LOGICO;}
-    | FALSE_ {$$.tipo = T_LOGICO;}
+const : CTE_
+    | TRUE_ 
+    | FALSE_ 
     ;
 
 tipoSimp : INT_
@@ -133,11 +135,11 @@ expreRel : expreAd
     | expreRel opRel expreAd
     ;
 
-expreAd : expreMul {$$.tipo = $1.tipo;}
+expreAd : expreMul
     | expreAd opAd expreMul
     ;
 
-expreMul : expreUna {$$.tipo = $1.tipo;}
+expreMul : expreUna
     | expreMul opMul expreUna
     ;
 

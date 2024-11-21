@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include "header.h"
 #include "bison.tab.h"
-
+#include "libtds.h"
 #define  retornar(x) {if (verbosidad) ECHO; return(x);}
 
 %}
