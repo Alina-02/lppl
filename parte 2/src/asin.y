@@ -20,7 +20,11 @@
 // Sección de reglas gramaticales
 
 %%
-programa : listDecla
+programa : listDecla {SIMB mainFunc = obtTds("main");
+                        if (mainFunc.t == T_ERROR || mainFunc.c != FUNCION)
+                            yyerror("No se ha encontrado una función main válida.");
+
+                        }
         ;
 
 listDecla : decla 
@@ -92,8 +96,15 @@ expreOP :
     | expre
     ;
 
-expre : expreLogic {$$.tipo = $1.tipo;}
-    | ID_ IGUALVARIABLE_ expre
+expre : expreLogic 
+    | ID_ IGUALVARIABLE_ expre {SIMB sim = obtTds($1); 
+                                if (sim.t == T_ERROR) yyerror("Objeto no declarado");
+                                else if ($3.t == T_error) $$ = sim;
+                                else if (!(((sim.t == T_ENTERO) && ($3.t == T_ENTERO)) ||
+                                            ((sim.t == T_LOGICO) && ($3.t == T_LOGICO))))
+                                    yyerror("Error de tipos en la intrucción de asinación");
+                                else $$ = sim;
+                                }
     | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ IGUALVARIABLE_ expre
     ;
 
