@@ -11,7 +11,6 @@
 %union{
     int cent;
     char *const;
-    Expresion texp;
 }
 
 %token <cent> ID_ 
@@ -24,7 +23,7 @@
 
 %type <const> const
 %type <cent> tipoSimp declaFunc
-%type <texp> expre
+%type <cent> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi opUna
 %type <void> bloque
 
 %token <cent> INT_ BOOL_
@@ -86,7 +85,7 @@ listParamForm : tipoSimp ID_
     | tipoSimp ID_ COMA_ listParamForm
     ;
 
-bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_
+bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_ {}
     ;
 
 declaVarLocal : 

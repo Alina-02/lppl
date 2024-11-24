@@ -562,14 +562,14 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    36,    36,    43,    44,    47,    48,    51,    58,    59,
-      62,    63,    64,    67,    68,    71,    81,    82,    85,    86,
-      89,    92,    93,    96,    97,   100,   101,   102,   103,   104,
-     107,   108,   111,   112,   115,   118,   121,   122,   125,   126,
-     134,   137,   138,   141,   142,   145,   146,   149,   150,   153,
-     154,   157,   158,   161,   162,   163,   164,   165,   168,   169,
-     172,   173,   176,   177,   180,   181,   184,   185,   186,   187,
-     190,   191,   194,   195,   198,   199,   200
+       0,    35,    35,    42,    43,    46,    47,    50,    57,    58,
+      61,    62,    63,    66,    67,    70,    80,    81,    84,    85,
+      88,    91,    92,    95,    96,    99,   100,   101,   102,   103,
+     106,   107,   110,   111,   114,   117,   120,   121,   124,   125,
+     133,   136,   137,   140,   141,   144,   145,   148,   149,   152,
+     153,   156,   157,   160,   161,   162,   163,   164,   167,   168,
+     171,   172,   175,   176,   179,   180,   183,   184,   185,   186,
+     189,   190,   193,   194,   197,   198,   199
 };
 #endif
 
@@ -1226,7 +1226,7 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* programa: listDecla  */
-#line 36 "src/asin.y"
+#line 35 "src/asin.y"
                      {SIMB mainFunc = obtTds("main");
                         if (mainFunc.t == T_ERROR || mainFunc.c != FUNCION)
                             yyerror("No se ha encontrado una función main válida.");
@@ -1236,7 +1236,7 @@ yyreduce:
     break;
 
   case 7: /* declaVar: tipoSimp ID_ PUNTOYCOMA_  */
-#line 51 "src/asin.y"
+#line 50 "src/asin.y"
                                     {
                                     if(!insTdS((yyvsp[-1].cent), VARIABLE, (yyvsp[-2].cent), niv, dvar, -1)) 
                                         yyerror("Identificador repetido.");
@@ -1247,7 +1247,7 @@ yyreduce:
     break;
 
   case 15: /* declaFunc: tipoSimp ID_ ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ bloque  */
-#line 72 "src/asin.y"
+#line 71 "src/asin.y"
                 {
                     if(!insTdS((yyvsp[-4].cent), FUNCION, (yyvsp[-5].cent), niv, -1, -1))
                         yyerror("Función repetida");
@@ -1258,21 +1258,27 @@ yyreduce:
 #line 1259 "asin.c"
     break;
 
+  case 20: /* bloque: ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_  */
+#line 88 "src/asin.y"
+                                                                                  {}
+#line 1265 "asin.c"
+    break;
+
   case 39: /* expre: ID_ IGUALVARIABLE_ expre  */
-#line 126 "src/asin.y"
+#line 125 "src/asin.y"
                                {SIMB sim = obtTds((yyvsp[-2].cent)); 
                                 if (sim.t == T_ERROR) yyerror("Objeto no declarado");
-                                else if ((yyvsp[0].texp).t == T_error) (yyval.texp) = sim;
-                                else if (!(((sim.t == T_ENTERO) && ((yyvsp[0].texp).t == T_ENTERO)) ||
-                                            ((sim.t == T_LOGICO) && ((yyvsp[0].texp).t == T_LOGICO))))
+                                else if ((yyvsp[0].cent).t == T_error) (yyval.cent) = sim;
+                                else if (!(((sim.t == T_ENTERO) && ((yyvsp[0].cent).t == T_ENTERO)) ||
+                                            ((sim.t == T_LOGICO) && ((yyvsp[0].cent).t == T_LOGICO))))
                                     yyerror("Error de tipos en la intrucción de asinación");
-                                else (yyval.texp) = sim;
+                                else (yyval.cent) = sim;
                                 }
-#line 1272 "asin.c"
+#line 1278 "asin.c"
     break;
 
 
-#line 1276 "asin.c"
+#line 1282 "asin.c"
 
       default: break;
     }
@@ -1465,5 +1471,5 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 203 "src/asin.y"
+#line 202 "src/asin.y"
 

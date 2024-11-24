@@ -100,9 +100,8 @@ union YYSTYPE
 
     int cent;
     char *const;
-    Expresion texp;
 
-#line 106 "asin.h"
+#line 105 "asin.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
