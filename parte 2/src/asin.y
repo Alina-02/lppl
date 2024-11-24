@@ -8,16 +8,27 @@
 
 //Declaraciones en Bison
 
-%token ID_ INT_ BOOL_ RETURN_ READ_ PRINT_ IF_ FOR_
+%union{
+    int cent;
+    char *const;
+    Expresion texp;
+}
+
+%token <cent> ID_ 
+%token RETURN_ READ_ PRINT_ IF_ FOR_
 %token IGUALVARIABLE_ PUNTOYCOMA_ ABRECORCHETE_ CIERRACORCHETE_ ABREPARENTESIS_ CIERRAPARENTESIS_
 %token ABRELLAVE_ CIERRALLAVE_ AND_ OR_ DIF_ MENQ_ MAYQ_ SUM_ RES_ MULT_ DIV_ COMA_ IGUALCOMPARAR_
 %token ELSE_ MENIGUQ_ MAYIGUQ_ DIFCOMPARAR_ 
 %token <const> CTE_ TRUE_ FALSE_
+
+
 %type <const> const
-%union{
-    int t;
-    char *ident;
-}
+%type <cent> tipoSimp declaFunc
+%type <texp> expre
+%type <void> bloque
+
+%token <cent> INT_ BOOL_
+
 
 // Sección de reglas gramaticales
 
