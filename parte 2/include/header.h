@@ -3,13 +3,13 @@
 /** definiciones de constantes, variables y estructuras para MenosC. Los    **/
 /** alumnos deberan adaptarlo al desarrollo de su propio compilador.    **/
 /*****************************************************************************/
-#include <cstdio>
 #ifndef _HEADER_H
 #define _HEADER_H
-
+#define TALLA_TIPO_SIMPLE 1 /* Talla asociada a los tipos simples */
+#define TALLA_SEGENLACES 2 /* Talla del segmento de Enlaces de Control */
 /****************************************************** Constantes generales */
-
-
+#define TRUE  1
+#define FALSE 0
 /************************************* Variables externas definidas en el AL */
 extern int yylex();
 extern int yyparse();

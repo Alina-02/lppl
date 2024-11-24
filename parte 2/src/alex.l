@@ -5,21 +5,12 @@
 %{
 #include <stdio.h>
 #include "header.h"
-#include "bison.tab.h"
-#include "libtds.h"
+#include "asin.h"
 #define  retornar(x) {if (verbosidad) ECHO; return(x);}
 
 %}
-/*----------------------------------------------------------------------
-  Dado que las funciones "input()" y "unput(c)" son costosas y no las
-  utilizaremos, evitaremos que se generen automaticamente sus rutinas
-  correspondientes desactivandolas mediante las siguientes opciones:
-----------------------------------------------------------------------*/
 %option noinput
 %option nounput
-/*----------------------------------------------------------------------
-  Para mantener el numero de linea actual en la variable global yylineno
-----------------------------------------------------------------------*/
 %option yylineno
 
 /*  Subsección de definiciones */
@@ -36,7 +27,7 @@ comentario      \/\/.*
 
 
 
-"\n"            {if (verbosidad) ECHO ; yylineno()}
+"\n"            {if (verbosidad){ ECHO; fprintf(stdout,"%3d.- ", yylineno); }}
 {delimitador}   {if (verbosidad) ECHO ; }
 
 
@@ -76,7 +67,7 @@ comentario      \/\/.*
 ")"           {retornar (CIERRAPARENTESIS_) ; }
 
 
-{constante}        {yylval.cent = (int) atoy(yytext); retornar (CTE_) ; }
+{constante}        {yylval.cent = atoi(yytext); retornar (CTE_) ; }
 {identificador}	 	 {yylval.ident = strdup(yytext); retornar (ID_) ; }
 {comentario}       {if(verbosidad) ECHO ;}
 
