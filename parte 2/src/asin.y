@@ -4,6 +4,7 @@
     #include <stdio.h>
     #include "header.h"
     #include "libtds.h"
+    // Preguntar en general sobre funciones, porque dvar = 0 y dvar en parametros negativo
 %}
 
 //Declaraciones en Bison
@@ -21,16 +22,18 @@
 
 %token <ident> ID_ 
 %token <cent> CTE_ TRUE_ FALSE_ INT_ BOOL_
-%type <cent> tipoSimp declaFunc const
+%type <cent> tipoSimp declaFunc const listParamForm paramForm
 %type <cent> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi
 
 
 // Sección de reglas gramaticales
 
 %%
-programa :  {cargaContexto(niv);} 
+programa :  {dvar = 0; niv = 0;cargaContexto(niv);} 
             listDecla 
-            {mostrarTdS();}
+            {mostrarTdS();
+            descargaContexto(niv+1);
+            }
         ;
 
 listDecla : decla 
@@ -84,31 +87,32 @@ tipoSimp : INT_ {$$ = T_ENTERO;}
     | BOOL_     {$$ = T_LOGICO;}
     ;
 
-declaFunc : tipoSimp ID_ ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ 
-    {   
-        SIMB funcion = obtTdS($2);
-        int ref;
-        if(funcion.t == T_ERROR){
-            ref = insTdD(-1,-1);
-            insTdS($2,FUNCION,$1,niv+1,dvar,ref);
-            dvar += TALLA_SEGENLACES;
-        }
-        else{
-            yyerror("Funcion Repetida");
-        }
+declaFunc :tipoSimp ID_ {
+    cargaContexto(niv+1);
+    $<cent>$ = dvar;
+    dvar = 0;
+}
+ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {
+    if(!insTdS($2,FUNCION,$1,niv++,0,$5)){ //Preguntar si pueden haber funciones dentro de funciones
+        yyerror("Ya existe una funcion con el mismo nombre");
     }
-    bloque
+} bloque {
+    mostrarTdS();
+    descargaContexto(niv);
+    niv--;
+    dvar = $<cent>3;
+}
     ;
 
-paramForm : 
+paramForm :         {$$ = insTdD(-1,T_VACIO);}
     | listParamForm
     ;
 
-listParamForm : tipoSimp ID_ 
-    | tipoSimp ID_ COMA_ listParamForm
+listParamForm : tipoSimp ID_   {$$ = insTdD(-1,$1);}
+    | tipoSimp ID_ COMA_ listParamForm {$$ = insTdD($4,$1);}
     ;
 
-bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_
+bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_ {$$ = 1; Si hay que comprobar que el return corresponda al tipo}
     ;
 
 declaVarLocal : 
@@ -137,7 +141,7 @@ instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_
 instSelec : IF_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ inst ELSE_ inst
     ;
 
-instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst
+instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst {$$ = 0; // Preguntar sobre variables en FOR}
     ;
 
 expreOP : 
@@ -200,8 +204,8 @@ expreSufi : const
                     if (sim.t == T_ERROR) yyerror("Objeto no declarado");
                     $$ = sim.t;
                     }
-    | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ {$$ = T_ENTERO;}
-    | ID_ ABREPARENTESIS_ paramAct CIERRAPARENTESIS_ {$$ = T_ENTERO;}
+    | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ {$$ = T_ENTERO; // Falta devolver tipos} 
+    | ID_ {$$ = 0; // Preguntar a marcelino como comprobar tipo de los parametros} ABREPARENTESIS_ paramAct CIERRAPARENTESIS_ {$$ = T_ENTERO;}
     ;
 
 paramAct : 
