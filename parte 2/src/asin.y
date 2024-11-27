@@ -2,9 +2,10 @@
 
 %{
     #include <stdio.h>
+    #include <string.h>
     #include "header.h"
     #include "libtds.h"
-    // Preguntar en general sobre funciones, porque dvar = 0 y dvar en parametros negativo
+    int funcmain = 0;
 %}
 
 //Declaraciones en Bison
@@ -22,17 +23,21 @@
 
 %token <ident> ID_ 
 %token <cent> CTE_ TRUE_ FALSE_ INT_ BOOL_
-%type <cent> tipoSimp declaFunc const listParamForm paramForm
+%type <cent> tipoSimp declaFunc const listParamAct paramAct listParamForm paramForm
 %type <cent> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi
-
 
 // Sección de reglas gramaticales
 
 %%
 programa :  {dvar = 0; niv = 0;cargaContexto(niv);} 
             listDecla 
-            {mostrarTdS();
-            descargaContexto(niv+1);
+            {   if(funcmain == 0){
+                yyerror("El programa no tiene funcion main");
+            }
+            else if (funcmain > 1){
+                yyerror("El programa tiene mas de una funcion main");
+            }
+
             }
         ;
 
@@ -88,18 +93,24 @@ tipoSimp : INT_ {$$ = T_ENTERO;}
     ;
 
 declaFunc :tipoSimp ID_ {
-    cargaContexto(niv+1);
+    cargaContexto(1);
+    niv = 1;
     $<cent>$ = dvar;
     dvar = 0;
 }
 ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {
-    if(!insTdS($2,FUNCION,$1,niv++,0,$5)){ //Preguntar si pueden haber funciones dentro de funciones
+    dvar = 0;
+    if(!insTdS($2,FUNCION,$1,0,0,$5)){
         yyerror("Ya existe una funcion con el mismo nombre");
     }
+    if(strcmp($2,"main") == 0){
+        funcmain++;
+    }
+    
 } bloque {
     mostrarTdS();
     descargaContexto(niv);
-    niv--;
+    niv = 0;
     dvar = $<cent>3;
 }
     ;
@@ -108,11 +119,17 @@ paramForm :         {$$ = insTdD(-1,T_VACIO);}
     | listParamForm
     ;
 
-listParamForm : tipoSimp ID_   {$$ = insTdD(-1,$1);}
-    | tipoSimp ID_ COMA_ listParamForm {$$ = insTdD($4,$1);}
+listParamForm : tipoSimp ID_   {
+    $$ = insTdD(-1,$1);dvar -= TALLA_TIPO_SIMPLE + TALLA_SEGENLACES;
+    if(!insTdS($2,PARAMETRO,$1,niv,dvar,-1)) yyerror("Ya existe un parametro con el mismo nombre");
+    }
+    | tipoSimp ID_ COMA_ listParamForm {
+    $$ = insTdD($4,$1); dvar -= TALLA_TIPO_SIMPLE;
+    if(!insTdS($2,PARAMETRO,$1,niv,dvar,-1)) yyerror("Ya existe un parametro con el mismo nombre");
+    }
     ;
 
-bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_ {$$ = 1; Si hay que comprobar que el return corresponda al tipo}
+bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_
     ;
 
 declaVarLocal : 
@@ -141,7 +158,7 @@ instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_
 instSelec : IF_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ inst ELSE_ inst
     ;
 
-instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst {$$ = 0; // Preguntar sobre variables en FOR}
+instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst
     ;
 
 expreOP : 
@@ -204,16 +221,35 @@ expreSufi : const
                     if (sim.t == T_ERROR) yyerror("Objeto no declarado");
                     $$ = sim.t;
                     }
-    | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ {$$ = T_ENTERO; // Falta devolver tipos} 
-    | ID_ {$$ = 0; // Preguntar a marcelino como comprobar tipo de los parametros} ABREPARENTESIS_ paramAct CIERRAPARENTESIS_ {$$ = T_ENTERO;}
+    | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ {$$ = T_ENTERO;} 
+    | ID_ ABREPARENTESIS_ paramAct CIERRAPARENTESIS_ {SIMB sim = obtTdS($1); 
+                                                    if (sim.t == T_ERROR){
+                                                        yyerror("Funcion no declarada");
+                                                        $$ = T_ERROR;
+                                                    } 
+                                                    else if(sim.t == T_ARRAY){
+                                                        yyerror("La variable no es una funcion");
+                                                        $$ = T_ERROR;
+                                                    }
+                                                    else if(sim.ref == -1){
+                                                        yyerror("La variable no es una funcion");
+                                                        $$ = T_ERROR;
+                                                    }
+                                                    else if(!cmpDom($3,sim.ref)){
+                                                        yyerror("Numero o tipo de parametros no coincide");
+                                                        $$ = T_ERROR;
+                                                    }else{
+                                                        $$ = sim.t;
+                                                        }
+                                                    }
     ;
 
-paramAct : 
+paramAct :          {$$ = insTdD(-1,T_VACIO);}
     | listParamAct
     ;
 
-listParamAct : expre
-    | expre COMA_ listParamAct
+listParamAct : expre    {$$ = insTdD(-1,$1);}
+    | expre COMA_ listParamAct {$$ = insTdD($3,$1);}
     ;
 
 opLogic : AND_
