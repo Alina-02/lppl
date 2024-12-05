@@ -163,8 +163,7 @@ instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_    {
     ;
 
 instSelec : IF_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ inst ELSE_ inst  {
-                                                                            SIMB sim = obtTds($3);
-                                                                            if(sim.t == T_ERROR) yyerror("Expresión errónea");
+                                                                            if($3 == T_ERROR) yyerror("Expresión errónea");
                                                                             else if ($3 != T_LOGICO) yyerror("La expresión debe ser de tipo lógico");
                                                                         }
   ;
