@@ -570,11 +570,11 @@ static const yytype_int16 yyrline[] =
        0,    32,    32,    32,    44,    45,    48,    49,    52,    58,
       69,    86,    87,    88,    91,    92,    95,   101,    95,   119,
      120,   123,   127,   133,   137,   138,   141,   142,   145,   146,
-     147,   148,   149,   152,   153,   156,   161,   167,   173,   176,
-     177,   180,   181,   189,   206,   207,   210,   211,   214,   215,
-     218,   219,   222,   223,   226,   227,   230,   231,   232,   236,
-     237,   259,   260,   263,   264,   267,   268,   271,   272,   275,
-     276,   277,   278,   281,   282,   285,   286,   289,   290,   291
+     147,   148,   149,   152,   153,   156,   161,   167,   173,   185,
+     186,   189,   190,   198,   215,   216,   219,   220,   223,   224,
+     227,   228,   231,   232,   235,   236,   239,   240,   241,   245,
+     246,   268,   269,   272,   273,   276,   277,   280,   281,   284,
+     285,   286,   287,   290,   291,   294,   295,   298,   299,   300
 };
 #endif
 
@@ -1418,13 +1418,40 @@ yyreduce:
 #line 167 "src/asin.y"
                                                                          {
                                                                             if((yyvsp[-4].cent) == T_ERROR) yyerror("Expresión errónea");
-                                                                            else if ((yyvsp[-4].cent) != T_LOGICO) yyerror("La expresión debe ser de tipo lógico");
+                                                                            else if ((yyvsp[-4].cent) != T_LOGICO) yyerror("La expresión if debe ser de tipo lógico");
                                                                         }
 #line 1424 "asin.c"
     break;
 
+  case 38: /* instIter: FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst  */
+#line 173 "src/asin.y"
+                                                                                                       {
+                                                                                                            if((yyvsp[-4].cent) == T_ERROR) yyerror("Objeto no declarado");
+                                                                                                            else if((yyvsp[-4].cent) != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico");
+                                                                                                            if((yyvsp[-6].cent)!=T_VACIO){
+                                                                                                                if((yyvsp[-6].cent) == T_ARRAY) yyerror("La expresión debe ser de tipo simple");
+                                                                                                            }
+                                                                                                            if((yyvsp[-2].cent)!=T_VACIO){
+                                                                                                                if((yyvsp[-2].cent) == T_ARRAY) yyerror("La expresión debe ser de tipo simple");
+                                                                                                            }
+                                                                                                        }
+#line 1439 "asin.c"
+    break;
+
+  case 39: /* expreOP: %empty  */
+#line 185 "src/asin.y"
+          {(yyval.cent) = T_VACIO;}
+#line 1445 "asin.c"
+    break;
+
+  case 40: /* expreOP: expre  */
+#line 186 "src/asin.y"
+            {(yyval.cent) = (yyvsp[0].cent);}
+#line 1451 "asin.c"
+    break;
+
   case 42: /* expre: ID_ IGUALVARIABLE_ expre  */
-#line 181 "src/asin.y"
+#line 190 "src/asin.y"
                                {SIMB sim = obtTdS((yyvsp[-2].ident)); 
                                 if (sim.t == T_ERROR) yyerror("Objeto no declarado");
                                 else if ((yyvsp[0].cent) == T_ERROR) (yyval.cent) = sim.t;
@@ -1433,11 +1460,11 @@ yyreduce:
                                     yyerror("Error de tipos en la instrucción de asignación");
                                 else (yyval.cent) = sim.t;
                                 }
-#line 1437 "asin.c"
+#line 1464 "asin.c"
     break;
 
   case 43: /* expre: ID_ ABRECORCHETE_ expre CIERRACORCHETE_ IGUALVARIABLE_ expre  */
-#line 189 "src/asin.y"
+#line 198 "src/asin.y"
                                                                    {SIMB sim = obtTdS((yyvsp[-5].ident)); 
                                 if (sim.t == T_ERROR) yyerror("Objeto no declarado");
                                 else if(sim.t != T_ARRAY) yyerror("La variable debe ser de tipo array");
@@ -1453,68 +1480,68 @@ yyreduce:
                                     }
                                 }
                                 }
-#line 1457 "asin.c"
+#line 1484 "asin.c"
     break;
 
   case 45: /* expreLogic: expreLogic opLogic expreIgual  */
-#line 207 "src/asin.y"
+#line 216 "src/asin.y"
                                     {(yyval.cent) = T_LOGICO;}
-#line 1463 "asin.c"
+#line 1490 "asin.c"
     break;
 
   case 47: /* expreIgual: expreIgual opIgual expreRel  */
-#line 211 "src/asin.y"
+#line 220 "src/asin.y"
                                   {(yyval.cent) = T_LOGICO;}
-#line 1469 "asin.c"
+#line 1496 "asin.c"
     break;
 
   case 49: /* expreRel: expreRel opRel expreAd  */
-#line 215 "src/asin.y"
+#line 224 "src/asin.y"
                                 {(yyval.cent) = T_LOGICO;}
-#line 1475 "asin.c"
+#line 1502 "asin.c"
     break;
 
   case 51: /* expreAd: expreAd opAd expreMul  */
-#line 219 "src/asin.y"
+#line 228 "src/asin.y"
                                 {(yyval.cent) = T_ENTERO;}
-#line 1481 "asin.c"
+#line 1508 "asin.c"
     break;
 
   case 53: /* expreMul: expreMul opMul expreUna  */
-#line 223 "src/asin.y"
+#line 232 "src/asin.y"
                                 {(yyval.cent) = T_ENTERO;}
-#line 1487 "asin.c"
+#line 1514 "asin.c"
     break;
 
   case 55: /* expreUna: opUna expreUna  */
-#line 227 "src/asin.y"
+#line 236 "src/asin.y"
                                 {(yyval.cent) = T_ENTERO;}
-#line 1493 "asin.c"
+#line 1520 "asin.c"
     break;
 
   case 57: /* expreSufi: ABREPARENTESIS_ expre CIERRAPARENTESIS_  */
-#line 231 "src/asin.y"
+#line 240 "src/asin.y"
                                               {(yyval.cent) = (yyvsp[-1].cent);}
-#line 1499 "asin.c"
+#line 1526 "asin.c"
     break;
 
   case 58: /* expreSufi: ID_  */
-#line 232 "src/asin.y"
+#line 241 "src/asin.y"
           {         SIMB sim = obtTdS((yyvsp[0].ident)); 
                     if (sim.t == T_ERROR) yyerror("Objeto no declarado");
                     (yyval.cent) = sim.t;
                     }
-#line 1508 "asin.c"
+#line 1535 "asin.c"
     break;
 
   case 59: /* expreSufi: ID_ ABRECORCHETE_ expre CIERRACORCHETE_  */
-#line 236 "src/asin.y"
+#line 245 "src/asin.y"
                                               {(yyval.cent) = T_ENTERO;}
-#line 1514 "asin.c"
+#line 1541 "asin.c"
     break;
 
   case 60: /* expreSufi: ID_ ABREPARENTESIS_ paramAct CIERRAPARENTESIS_  */
-#line 237 "src/asin.y"
+#line 246 "src/asin.y"
                                                      {SIMB sim = obtTdS((yyvsp[-3].ident)); 
                                                     if (sim.t == T_ERROR){
                                                         yyerror("Funcion no declarada");
@@ -1535,29 +1562,29 @@ yyreduce:
                                                         (yyval.cent) = sim.t;
                                                         }
                                                     }
-#line 1539 "asin.c"
+#line 1566 "asin.c"
     break;
 
   case 61: /* paramAct: %empty  */
-#line 259 "src/asin.y"
+#line 268 "src/asin.y"
                     {(yyval.cent) = insTdD(-1,T_VACIO);}
-#line 1545 "asin.c"
+#line 1572 "asin.c"
     break;
 
   case 63: /* listParamAct: expre  */
-#line 263 "src/asin.y"
+#line 272 "src/asin.y"
                         {(yyval.cent) = insTdD(-1,(yyvsp[0].cent));}
-#line 1551 "asin.c"
+#line 1578 "asin.c"
     break;
 
   case 64: /* listParamAct: expre COMA_ listParamAct  */
-#line 264 "src/asin.y"
+#line 273 "src/asin.y"
                                {(yyval.cent) = insTdD((yyvsp[0].cent),(yyvsp[-2].cent));}
-#line 1557 "asin.c"
+#line 1584 "asin.c"
     break;
 
 
-#line 1561 "asin.c"
+#line 1588 "asin.c"
 
       default: break;
     }
@@ -1750,5 +1777,5 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 294 "src/asin.y"
+#line 303 "src/asin.y"
 

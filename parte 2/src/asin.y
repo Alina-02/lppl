@@ -24,7 +24,7 @@
 %token <ident> ID_ 
 %token <cent> CTE_ TRUE_ FALSE_ INT_ BOOL_
 %type <cent> tipoSimp declaFunc const listParamAct paramAct listParamForm paramForm
-%type <cent> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi bloque
+%type <cent> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi bloque expreOP
 
 // Sección de reglas gramaticales
 
@@ -173,17 +173,17 @@ instSelec : IF_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ inst ELSE_ inst  {
 instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst   {
                                                                                                             if($5 == T_ERROR) yyerror("Objeto no declarado");
                                                                                                             else if($5 != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico");
-                                                                                                            if($3){
+                                                                                                            if($3!=T_VACIO){
                                                                                                                 if($3 == T_ARRAY) yyerror("La expresión debe ser de tipo simple");
                                                                                                             }
-                                                                                                            if($7){
+                                                                                                            if($7!=T_VACIO){
                                                                                                                 if($7 == T_ARRAY) yyerror("La expresión debe ser de tipo simple");
                                                                                                             }
                                                                                                         }
     ;
 
-expreOP : 
-    | expre
+expreOP : {$$ = T_VACIO;} 
+    | expre {$$ = $1;} 
     ;
 
 expre : expreLogic 
