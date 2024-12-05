@@ -54,35 +54,35 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    ID_ = 258,                     /* ID_  */
-    RETURN_ = 259,                 /* RETURN_  */
-    READ_ = 260,                   /* READ_  */
-    PRINT_ = 261,                  /* PRINT_  */
-    IF_ = 262,                     /* IF_  */
-    FOR_ = 263,                    /* FOR_  */
-    IGUALVARIABLE_ = 264,          /* IGUALVARIABLE_  */
-    PUNTOYCOMA_ = 265,             /* PUNTOYCOMA_  */
-    ABRECORCHETE_ = 266,           /* ABRECORCHETE_  */
-    CIERRACORCHETE_ = 267,         /* CIERRACORCHETE_  */
-    ABREPARENTESIS_ = 268,         /* ABREPARENTESIS_  */
-    CIERRAPARENTESIS_ = 269,       /* CIERRAPARENTESIS_  */
-    ABRELLAVE_ = 270,              /* ABRELLAVE_  */
-    CIERRALLAVE_ = 271,            /* CIERRALLAVE_  */
-    AND_ = 272,                    /* AND_  */
-    OR_ = 273,                     /* OR_  */
-    DIF_ = 274,                    /* DIF_  */
-    MENQ_ = 275,                   /* MENQ_  */
-    MAYQ_ = 276,                   /* MAYQ_  */
-    SUM_ = 277,                    /* SUM_  */
-    RES_ = 278,                    /* RES_  */
-    MULT_ = 279,                   /* MULT_  */
-    DIV_ = 280,                    /* DIV_  */
-    COMA_ = 281,                   /* COMA_  */
-    IGUALCOMPARAR_ = 282,          /* IGUALCOMPARAR_  */
-    ELSE_ = 283,                   /* ELSE_  */
-    MENIGUQ_ = 284,                /* MENIGUQ_  */
-    MAYIGUQ_ = 285,                /* MAYIGUQ_  */
-    DIFCOMPARAR_ = 286,            /* DIFCOMPARAR_  */
+    RETURN_ = 258,                 /* RETURN_  */
+    READ_ = 259,                   /* READ_  */
+    PRINT_ = 260,                  /* PRINT_  */
+    IF_ = 261,                     /* IF_  */
+    FOR_ = 262,                    /* FOR_  */
+    IGUALVARIABLE_ = 263,          /* IGUALVARIABLE_  */
+    PUNTOYCOMA_ = 264,             /* PUNTOYCOMA_  */
+    ABRECORCHETE_ = 265,           /* ABRECORCHETE_  */
+    CIERRACORCHETE_ = 266,         /* CIERRACORCHETE_  */
+    ABREPARENTESIS_ = 267,         /* ABREPARENTESIS_  */
+    CIERRAPARENTESIS_ = 268,       /* CIERRAPARENTESIS_  */
+    ABRELLAVE_ = 269,              /* ABRELLAVE_  */
+    CIERRALLAVE_ = 270,            /* CIERRALLAVE_  */
+    AND_ = 271,                    /* AND_  */
+    OR_ = 272,                     /* OR_  */
+    DIF_ = 273,                    /* DIF_  */
+    MENQ_ = 274,                   /* MENQ_  */
+    MAYQ_ = 275,                   /* MAYQ_  */
+    SUM_ = 276,                    /* SUM_  */
+    RES_ = 277,                    /* RES_  */
+    MULT_ = 278,                   /* MULT_  */
+    DIV_ = 279,                    /* DIV_  */
+    COMA_ = 280,                   /* COMA_  */
+    IGUALCOMPARAR_ = 281,          /* IGUALCOMPARAR_  */
+    ELSE_ = 282,                   /* ELSE_  */
+    MENIGUQ_ = 283,                /* MENIGUQ_  */
+    MAYIGUQ_ = 284,                /* MAYIGUQ_  */
+    DIFCOMPARAR_ = 285,            /* DIFCOMPARAR_  */
+    ID_ = 286,                     /* ID_  */
     CTE_ = 287,                    /* CTE_  */
     TRUE_ = 288,                   /* TRUE_  */
     FALSE_ = 289,                  /* FALSE_  */
@@ -96,10 +96,10 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 11 "src/asin.y"
+#line 13 "src/asin.y"
 
     int cent;
-    char *const;
+    char *ident;
 
 #line 105 "asin.h"
 

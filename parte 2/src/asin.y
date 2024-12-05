@@ -151,8 +151,15 @@ instExpre : expre PUNTOYCOMA_
     | PUNTOYCOMA_
     ;
 
-instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_
-    | PRINT_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ PUNTOYCOMA_
+instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_    {
+                                                                            SIMB sim = obtTdS($3);
+                                                                            if (sim.t == T_ERROR) yyerror("Objeto no declarado");
+                                                                            else if (sim.t != T_ENTERO) yyerror("Error de tipos en la instrucción read");
+                                                                        } 
+    | PRINT_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ PUNTOYCOMA_        {
+                                                                            if ($3 == T_ERROR) yyerror("Objeto no declarado");
+                                                                            else if ($3 != T_ENTERO) yyerror("Error de tipos en la instrucción read");
+                                                                        } 
     ;
 
 instSelec : IF_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ inst ELSE_ inst
@@ -171,7 +178,7 @@ expre : expreLogic
                                 else if ($3 == T_ERROR) $$ = sim.t;
                                 else if (!(((sim.t == T_ENTERO) && ($3 == T_ENTERO)) ||
                                             ((sim.t == T_LOGICO) && ($3 == T_LOGICO))))
-                                    yyerror("Error de tipos en la intrucción de asignación");
+                                    yyerror("Error de tipos en la instrucción de asignación");
                                 else $$ = sim.t;
                                 }
     | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ IGUALVARIABLE_ expre {SIMB sim = obtTdS($1); 

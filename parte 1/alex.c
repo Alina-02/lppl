@@ -521,13 +521,22 @@ char *yytext;
 #line 6 "src/alex.l"
 #include <stdio.h>
 #include "header.h"
-#include "asin.h"
-#define  retornar(x) {if (verbosidad) ECHO; return(x);}
+#include "bison.tab.h"
 
-#line 528 "alex.c"
+#define  retornar(x) {return(x);}
+
+#line 529 "alex.c"
+/*----------------------------------------------------------------------
+  Dado que las funciones "input()" y "unput(c)" son costosas y no las
+  utilizaremos, evitaremos que se generen automaticamente sus rutinas
+  correspondientes desactivandolas mediante las siguientes opciones:
+----------------------------------------------------------------------*/
 #define YY_NO_INPUT 1
+/*----------------------------------------------------------------------
+  Para mantener el numero de linea actual en la variable global yylineno
+----------------------------------------------------------------------*/
 /*  Subsección de definiciones */
-#line 531 "alex.c"
+#line 540 "alex.c"
 
 #define INITIAL 0
 
@@ -742,12 +751,12 @@ YY_DECL
 		}
 
 	{
-#line 26 "src/alex.l"
+#line 35 "src/alex.l"
 
 
 
 
-#line 751 "alex.c"
+#line 760 "alex.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -817,200 +826,200 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 30 "src/alex.l"
-{if (verbosidad){ ECHO; fprintf(stdout,"%3d.- ", yylineno); }}
+#line 39 "src/alex.l"
+{if (verbosidad) ECHO ; yylineno()}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 31 "src/alex.l"
+#line 40 "src/alex.l"
 {if (verbosidad) ECHO ; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 34 "src/alex.l"
-{retornar (TRUE_) ; }
+#line 41 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (TRUE_) ; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 35 "src/alex.l"
-{retornar (FALSE_) ; }
+#line 42 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (FALSE_) ; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 36 "src/alex.l"
-{retornar (INT_) ; }
+#line 43 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (INT_) ; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 37 "src/alex.l"
-{retornar (READ_) ; }
+#line 44 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (READ_) ; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 38 "src/alex.l"
-{retornar (FOR_) ; }
+#line 45 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (FOR_) ; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 39 "src/alex.l"
-{retornar (IF_) ; }
+#line 46 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (IF_) ; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 40 "src/alex.l"
-{retornar (ELSE_) ;}
+#line 47 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (ELSE_) ;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 41 "src/alex.l"
-{retornar (PRINT_) ; }
+#line 48 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (PRINT_) ; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 42 "src/alex.l"
-{retornar (BOOL_) ; }
+#line 49 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (BOOL_) ; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 43 "src/alex.l"
-{retornar (RETURN_) ; }
+#line 50 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (RETURN_) ; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 46 "src/alex.l"
-{retornar (IGUALVARIABLE_) ; }
+#line 51 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (IGUALVARIABLE_) ; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 47 "src/alex.l"
-{retornar (IGUALCOMPARAR_) ; }
+#line 52 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (IGUALCOMPARAR_) ; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 48 "src/alex.l"
-{retornar (DIFCOMPARAR_) ; }
+#line 53 "src/alex.l"
+{if (verbosidad) ECHO; retornar (DIFCOMPARAR_) ; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 49 "src/alex.l"
-{retornar (AND_) ; }
+#line 54 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (AND_) ; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 50 "src/alex.l"
-{retornar (OR_) ; }
+#line 55 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (OR_) ; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 51 "src/alex.l"
-{retornar (MENQ_) ; }
+#line 56 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (MENQ_) ; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 52 "src/alex.l"
-{retornar (MENIGUQ_) ;}
+#line 57 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (MENIGUQ_) ;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 53 "src/alex.l"
-{retornar (MAYQ_) ; }
+#line 58 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (MAYQ_) ; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 54 "src/alex.l"
-{retornar (MAYIGUQ_) ;}
+#line 59 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (MAYIGUQ_) ;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 55 "src/alex.l"
-{retornar (COMA_) ; }
+#line 60 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (COMA_) ; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 56 "src/alex.l"
-{retornar (PUNTOYCOMA_) ; }
+#line 61 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (PUNTOYCOMA_) ; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 57 "src/alex.l"
-{retornar (ABRELLAVE_) ; }
+#line 62 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (ABRELLAVE_) ; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 58 "src/alex.l"
-{retornar (CIERRALLAVE_) ; }
+#line 63 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (CIERRALLAVE_) ; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 59 "src/alex.l"
-{retornar (ABRECORCHETE_) ; }
+#line 64 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (ABRECORCHETE_) ; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 60 "src/alex.l"
-{retornar (CIERRACORCHETE_) ; }
+#line 65 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (CIERRACORCHETE_) ; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 61 "src/alex.l"
-{retornar (DIF_) ; }
+#line 66 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (DIF_) ; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 62 "src/alex.l"
-{retornar (SUM_) ; }
+#line 67 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (SUM_) ; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 63 "src/alex.l"
-{retornar (RES_) ; }
+#line 68 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (RES_) ; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 64 "src/alex.l"
-{retornar (MULT_) ; }
+#line 69 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (MULT_) ; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 65 "src/alex.l"
-{retornar (DIV_) ; }
+#line 70 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (DIV_) ; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 66 "src/alex.l"
-{retornar (ABREPARENTESIS_) ; }
+#line 71 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (ABREPARENTESIS_) ; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 67 "src/alex.l"
-{retornar (CIERRAPARENTESIS_) ; }
+#line 72 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (CIERRAPARENTESIS_) ; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 70 "src/alex.l"
-{yylval.cent = atoi(yytext); retornar (CTE_) ; }
+#line 73 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (CTE_) ; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 71 "src/alex.l"
-{yylval.ident = strdup(yytext); retornar (ID_) ; }
+#line 74 "src/alex.l"
+{if (verbosidad) ECHO ; retornar (ID_) ; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 72 "src/alex.l"
+#line 75 "src/alex.l"
 {if(verbosidad) ECHO ;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 74 "src/alex.l"
+#line 77 "src/alex.l"
 { yyerror("Caracter desconocido") ;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 76 "src/alex.l"
+#line 79 "src/alex.l"
 ECHO;
 	YY_BREAK
-#line 1014 "alex.c"
+#line 1023 "alex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1986,6 +1995,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 76 "src/alex.l"
+#line 79 "src/alex.l"
 
 
