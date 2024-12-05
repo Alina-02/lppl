@@ -164,11 +164,20 @@ instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_    {
 
 instSelec : IF_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ inst ELSE_ inst  {
                                                                             if($3 == T_ERROR) yyerror("Expresión errónea");
-                                                                            else if ($3 != T_LOGICO) yyerror("La expresión debe ser de tipo lógico");
+                                                                            else if ($3 != T_LOGICO) yyerror("La expresión if debe ser de tipo lógico");
                                                                         }
   ;
 
-instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst
+instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst   {
+                                                                                                            if($5 == T_ERROR) yyerror("Objeto no declarado");
+                                                                                                            else if($5 != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico");
+                                                                                                            if($3){
+                                                                                                                if($3 == T_ARRAY) yyerror("La expresión debe ser de tipo simple");
+                                                                                                            }
+                                                                                                            if($7){
+                                                                                                                if($7 == T_ARRAY) yyerror("La expresión debe ser de tipo simple");
+                                                                                                            }
+                                                                                                        }
     ;
 
 expreOP : 
