@@ -24,7 +24,7 @@
 %token <ident> ID_ 
 %token <cent> CTE_ TRUE_ FALSE_ INT_ BOOL_
 %type <cent> tipoSimp declaFunc const listParamAct paramAct listParamForm paramForm
-%type <cent> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi
+%type <cent> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi bloque
 
 // Sección de reglas gramaticales
 
@@ -112,6 +112,7 @@ ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {
     descargaContexto(niv);
     niv = 0;
     dvar = $<cent>3;
+    if ($8!= $1) yyerror("El tipo retornado y el de la funcion no coincide");
 }
     ;
 
@@ -129,8 +130,9 @@ listParamForm : tipoSimp ID_   {
     }
     ;
 
-bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_
-    ;
+bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_  {
+    $$ = $5;
+} ;
 
 declaVarLocal : 
     | declaVarLocal declaVar

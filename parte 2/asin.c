@@ -568,13 +568,13 @@ static const yytype_int8 yytranslate[] =
 static const yytype_int16 yyrline[] =
 {
        0,    32,    32,    32,    44,    45,    48,    49,    52,    58,
-      69,    86,    87,    88,    91,    92,    95,   101,    95,   118,
-     119,   122,   126,   132,   135,   136,   139,   140,   143,   144,
-     145,   146,   147,   150,   151,   154,   159,   165,   171,   174,
-     175,   178,   179,   187,   204,   205,   208,   209,   212,   213,
-     216,   217,   220,   221,   224,   225,   228,   229,   230,   234,
-     235,   257,   258,   261,   262,   265,   266,   269,   270,   273,
-     274,   275,   276,   279,   280,   283,   284,   287,   288,   289
+      69,    86,    87,    88,    91,    92,    95,   101,    95,   119,
+     120,   123,   127,   133,   137,   138,   141,   142,   145,   146,
+     147,   148,   149,   152,   153,   156,   161,   167,   173,   176,
+     177,   180,   181,   189,   206,   207,   210,   211,   214,   215,
+     218,   219,   222,   223,   226,   227,   230,   231,   232,   236,
+     237,   259,   260,   263,   264,   267,   268,   271,   272,   275,
+     276,   277,   278,   281,   282,   285,   286,   289,   290,   291
 };
 #endif
 
@@ -1358,64 +1358,73 @@ yyreduce:
     descargaContexto(niv);
     niv = 0;
     dvar = (yyvsp[-5].cent);
+    if ((yyvsp[0].cent)!= (yyvsp[-7].cent)) yyerror("El tipo retornado y el de la funcion no coincide");
 }
-#line 1363 "asin.c"
+#line 1364 "asin.c"
     break;
 
   case 19: /* paramForm: %empty  */
-#line 118 "src/asin.y"
+#line 119 "src/asin.y"
                     {(yyval.cent) = insTdD(-1,T_VACIO);}
-#line 1369 "asin.c"
+#line 1370 "asin.c"
     break;
 
   case 21: /* listParamForm: tipoSimp ID_  */
-#line 122 "src/asin.y"
+#line 123 "src/asin.y"
                                {
     (yyval.cent) = insTdD(-1,(yyvsp[-1].cent));dvar -= TALLA_TIPO_SIMPLE + TALLA_SEGENLACES;
     if(!insTdS((yyvsp[0].ident),PARAMETRO,(yyvsp[-1].cent),niv,dvar,-1)) yyerror("Ya existe un parametro con el mismo nombre");
     }
-#line 1378 "asin.c"
+#line 1379 "asin.c"
     break;
 
   case 22: /* listParamForm: tipoSimp ID_ COMA_ listParamForm  */
-#line 126 "src/asin.y"
+#line 127 "src/asin.y"
                                        {
     (yyval.cent) = insTdD((yyvsp[0].cent),(yyvsp[-3].cent)); dvar -= TALLA_TIPO_SIMPLE;
     if(!insTdS((yyvsp[-2].ident),PARAMETRO,(yyvsp[-3].cent),niv,dvar,-1)) yyerror("Ya existe un parametro con el mismo nombre");
     }
-#line 1387 "asin.c"
+#line 1388 "asin.c"
+    break;
+
+  case 23: /* bloque: ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_  */
+#line 133 "src/asin.y"
+                                                                                   {
+    (yyval.cent) = (yyvsp[-2].cent);
+}
+#line 1396 "asin.c"
     break;
 
   case 35: /* instEntSal: READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_  */
-#line 154 "src/asin.y"
+#line 156 "src/asin.y"
                                                                         {
                                                                             SIMB sim = obtTdS((yyvsp[-2].ident));
                                                                             if (sim.t == T_ERROR) yyerror("Objeto no declarado");
                                                                             else if (sim.t != T_ENTERO) yyerror("Error de tipos en la instrucción read");
                                                                         }
-#line 1397 "asin.c"
+#line 1406 "asin.c"
     break;
 
   case 36: /* instEntSal: PRINT_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ PUNTOYCOMA_  */
-#line 159 "src/asin.y"
+#line 161 "src/asin.y"
                                                                         {
                                                                             if ((yyvsp[-2].cent) == T_ERROR) yyerror("Objeto no declarado");
                                                                             else if ((yyvsp[-2].cent) != T_ENTERO) yyerror("Error de tipos en la instrucción read");
                                                                         }
-#line 1406 "asin.c"
+#line 1415 "asin.c"
     break;
 
   case 37: /* instSelec: IF_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ inst ELSE_ inst  */
-#line 165 "src/asin.y"
+#line 167 "src/asin.y"
                                                                          {
                                                                             if((yyvsp[-4].cent) == T_ERROR) yyerror("Expresión errónea");
                                                                             else if ((yyvsp[-4].cent) != T_LOGICO) yyerror("La expresión debe ser de tipo lógico");
                                                                         }
-#line 1415 "asin.c"
+#line 1424 "asin.c"
     break;
 
   case 42: /* expre: ID_ IGUALVARIABLE_ expre  */
-#line 179 "src/asin.y"
+#line 181 "src/asin.y"
                                {SIMB sim = obtTdS((yyvsp[-2].ident)); 
                                 if (sim.t == T_ERROR) yyerror("Objeto no declarado");
                                 else if ((yyvsp[0].cent) == T_ERROR) (yyval.cent) = sim.t;
@@ -1424,11 +1433,11 @@ yyreduce:
                                     yyerror("Error de tipos en la instrucción de asignación");
                                 else (yyval.cent) = sim.t;
                                 }
-#line 1428 "asin.c"
+#line 1437 "asin.c"
     break;
 
   case 43: /* expre: ID_ ABRECORCHETE_ expre CIERRACORCHETE_ IGUALVARIABLE_ expre  */
-#line 187 "src/asin.y"
+#line 189 "src/asin.y"
                                                                    {SIMB sim = obtTdS((yyvsp[-5].ident)); 
                                 if (sim.t == T_ERROR) yyerror("Objeto no declarado");
                                 else if(sim.t != T_ARRAY) yyerror("La variable debe ser de tipo array");
@@ -1444,68 +1453,68 @@ yyreduce:
                                     }
                                 }
                                 }
-#line 1448 "asin.c"
+#line 1457 "asin.c"
     break;
 
   case 45: /* expreLogic: expreLogic opLogic expreIgual  */
-#line 205 "src/asin.y"
+#line 207 "src/asin.y"
                                     {(yyval.cent) = T_LOGICO;}
-#line 1454 "asin.c"
+#line 1463 "asin.c"
     break;
 
   case 47: /* expreIgual: expreIgual opIgual expreRel  */
-#line 209 "src/asin.y"
+#line 211 "src/asin.y"
                                   {(yyval.cent) = T_LOGICO;}
-#line 1460 "asin.c"
+#line 1469 "asin.c"
     break;
 
   case 49: /* expreRel: expreRel opRel expreAd  */
-#line 213 "src/asin.y"
+#line 215 "src/asin.y"
                                 {(yyval.cent) = T_LOGICO;}
-#line 1466 "asin.c"
+#line 1475 "asin.c"
     break;
 
   case 51: /* expreAd: expreAd opAd expreMul  */
-#line 217 "src/asin.y"
+#line 219 "src/asin.y"
                                 {(yyval.cent) = T_ENTERO;}
-#line 1472 "asin.c"
+#line 1481 "asin.c"
     break;
 
   case 53: /* expreMul: expreMul opMul expreUna  */
-#line 221 "src/asin.y"
+#line 223 "src/asin.y"
                                 {(yyval.cent) = T_ENTERO;}
-#line 1478 "asin.c"
+#line 1487 "asin.c"
     break;
 
   case 55: /* expreUna: opUna expreUna  */
-#line 225 "src/asin.y"
+#line 227 "src/asin.y"
                                 {(yyval.cent) = T_ENTERO;}
-#line 1484 "asin.c"
+#line 1493 "asin.c"
     break;
 
   case 57: /* expreSufi: ABREPARENTESIS_ expre CIERRAPARENTESIS_  */
-#line 229 "src/asin.y"
+#line 231 "src/asin.y"
                                               {(yyval.cent) = (yyvsp[-1].cent);}
-#line 1490 "asin.c"
+#line 1499 "asin.c"
     break;
 
   case 58: /* expreSufi: ID_  */
-#line 230 "src/asin.y"
+#line 232 "src/asin.y"
           {         SIMB sim = obtTdS((yyvsp[0].ident)); 
                     if (sim.t == T_ERROR) yyerror("Objeto no declarado");
                     (yyval.cent) = sim.t;
                     }
-#line 1499 "asin.c"
+#line 1508 "asin.c"
     break;
 
   case 59: /* expreSufi: ID_ ABRECORCHETE_ expre CIERRACORCHETE_  */
-#line 234 "src/asin.y"
+#line 236 "src/asin.y"
                                               {(yyval.cent) = T_ENTERO;}
-#line 1505 "asin.c"
+#line 1514 "asin.c"
     break;
 
   case 60: /* expreSufi: ID_ ABREPARENTESIS_ paramAct CIERRAPARENTESIS_  */
-#line 235 "src/asin.y"
+#line 237 "src/asin.y"
                                                      {SIMB sim = obtTdS((yyvsp[-3].ident)); 
                                                     if (sim.t == T_ERROR){
                                                         yyerror("Funcion no declarada");
@@ -1526,29 +1535,29 @@ yyreduce:
                                                         (yyval.cent) = sim.t;
                                                         }
                                                     }
-#line 1530 "asin.c"
+#line 1539 "asin.c"
     break;
 
   case 61: /* paramAct: %empty  */
-#line 257 "src/asin.y"
+#line 259 "src/asin.y"
                     {(yyval.cent) = insTdD(-1,T_VACIO);}
-#line 1536 "asin.c"
+#line 1545 "asin.c"
     break;
 
   case 63: /* listParamAct: expre  */
-#line 261 "src/asin.y"
+#line 263 "src/asin.y"
                         {(yyval.cent) = insTdD(-1,(yyvsp[0].cent));}
-#line 1542 "asin.c"
+#line 1551 "asin.c"
     break;
 
   case 64: /* listParamAct: expre COMA_ listParamAct  */
-#line 262 "src/asin.y"
+#line 264 "src/asin.y"
                                {(yyval.cent) = insTdD((yyvsp[0].cent),(yyvsp[-2].cent));}
-#line 1548 "asin.c"
+#line 1557 "asin.c"
     break;
 
 
-#line 1552 "asin.c"
+#line 1561 "asin.c"
 
       default: break;
     }
@@ -1741,5 +1750,5 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 292 "src/asin.y"
+#line 294 "src/asin.y"
 
