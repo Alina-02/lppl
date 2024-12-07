@@ -213,11 +213,16 @@ expre : expreLogic
     ;
 
 expreLogic : expreIgual
-    | expreLogic opLogic expreIgual {$$ = T_LOGICO;}
+    | expreLogic opLogic expreIgual {
+        if($1==T_ERROR|| $3==T_ERROR ) $$=T_ERROR;
+        else $$ = T_LOGICO;
+    }
     ;
 
 expreIgual : expreRel
-    | expreIgual opIgual expreRel {$$ = T_LOGICO;}
+    | expreIgual opIgual expreRel {
+                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion de igualdad");$$=T_ERROR;};
+                                    }
     ;
 
 expreRel : expreAd
