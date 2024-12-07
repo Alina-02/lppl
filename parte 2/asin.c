@@ -572,9 +572,9 @@ static const yytype_int16 yyrline[] =
      120,   123,   127,   133,   137,   138,   141,   142,   145,   146,
      147,   148,   149,   152,   153,   156,   161,   167,   173,   185,
      186,   189,   190,   198,   215,   216,   222,   223,   228,   229,
-     235,   236,   239,   240,   243,   244,   247,   248,   249,   253,
-     254,   276,   277,   280,   281,   284,   285,   288,   289,   292,
-     293,   294,   295,   298,   299,   302,   303,   306,   307,   308
+     235,   236,   242,   243,   249,   250,   253,   254,   255,   259,
+     260,   282,   283,   286,   287,   290,   291,   294,   295,   298,
+     299,   300,   301,   304,   305,   308,   309,   312,   313,   314
 };
 #endif
 
@@ -1511,45 +1511,51 @@ yyreduce:
 
   case 51: /* expreAd: expreAd opAd expreMul  */
 #line 236 "src/asin.y"
-                                {(yyval.cent) = T_ENTERO;}
-#line 1516 "asin.c"
+                                {
+                                        if ((yyvsp[-2].cent) != (yyvsp[0].cent)|| (yyvsp[-2].cent) == T_ERROR|| (yyvsp[0].cent) == T_ERROR  ) {yyerror("Error en expresion aditiva"); }
+                                        (yyval.cent) = T_ENTERO;
+                                    }
+#line 1519 "asin.c"
     break;
 
   case 53: /* expreMul: expreMul opMul expreUna  */
-#line 240 "src/asin.y"
-                                {(yyval.cent) = T_ENTERO;}
-#line 1522 "asin.c"
-    break;
-
-  case 55: /* expreUna: opUna expreUna  */
-#line 244 "src/asin.y"
-                                {(yyval.cent) = T_ENTERO;}
+#line 243 "src/asin.y"
+                                {
+                                        if ((yyvsp[-2].cent) != (yyvsp[0].cent)|| (yyvsp[-2].cent) == T_ERROR|| (yyvsp[0].cent) == T_ERROR  ) {yyerror("Error en expresion multiplicativa"); }
+                                        (yyval.cent) = T_ENTERO;
+                                    }
 #line 1528 "asin.c"
     break;
 
-  case 57: /* expreSufi: ABREPARENTESIS_ expre CIERRAPARENTESIS_  */
-#line 248 "src/asin.y"
-                                              {(yyval.cent) = (yyvsp[-1].cent);}
+  case 55: /* expreUna: opUna expreUna  */
+#line 250 "src/asin.y"
+                                {(yyval.cent) = T_ENTERO;}
 #line 1534 "asin.c"
     break;
 
+  case 57: /* expreSufi: ABREPARENTESIS_ expre CIERRAPARENTESIS_  */
+#line 254 "src/asin.y"
+                                              {(yyval.cent) = (yyvsp[-1].cent);}
+#line 1540 "asin.c"
+    break;
+
   case 58: /* expreSufi: ID_  */
-#line 249 "src/asin.y"
+#line 255 "src/asin.y"
           {         SIMB sim = obtTdS((yyvsp[0].ident)); 
                     if (sim.t == T_ERROR) yyerror("Objeto no declarado");
                     (yyval.cent) = sim.t;
                     }
-#line 1543 "asin.c"
-    break;
-
-  case 59: /* expreSufi: ID_ ABRECORCHETE_ expre CIERRACORCHETE_  */
-#line 253 "src/asin.y"
-                                              {(yyval.cent) = T_ENTERO;}
 #line 1549 "asin.c"
     break;
 
+  case 59: /* expreSufi: ID_ ABRECORCHETE_ expre CIERRACORCHETE_  */
+#line 259 "src/asin.y"
+                                              {(yyval.cent) = T_ENTERO;}
+#line 1555 "asin.c"
+    break;
+
   case 60: /* expreSufi: ID_ ABREPARENTESIS_ paramAct CIERRAPARENTESIS_  */
-#line 254 "src/asin.y"
+#line 260 "src/asin.y"
                                                      {SIMB sim = obtTdS((yyvsp[-3].ident)); 
                                                     if (sim.t == T_ERROR){
                                                         yyerror("Funcion no declarada");
@@ -1570,29 +1576,29 @@ yyreduce:
                                                         (yyval.cent) = sim.t;
                                                         }
                                                     }
-#line 1574 "asin.c"
-    break;
-
-  case 61: /* paramAct: %empty  */
-#line 276 "src/asin.y"
-                    {(yyval.cent) = insTdD(-1,T_VACIO);}
 #line 1580 "asin.c"
     break;
 
-  case 63: /* listParamAct: expre  */
-#line 280 "src/asin.y"
-                        {(yyval.cent) = insTdD(-1,(yyvsp[0].cent));}
+  case 61: /* paramAct: %empty  */
+#line 282 "src/asin.y"
+                    {(yyval.cent) = insTdD(-1,T_VACIO);}
 #line 1586 "asin.c"
     break;
 
-  case 64: /* listParamAct: expre COMA_ listParamAct  */
-#line 281 "src/asin.y"
-                               {(yyval.cent) = insTdD((yyvsp[0].cent),(yyvsp[-2].cent));}
+  case 63: /* listParamAct: expre  */
+#line 286 "src/asin.y"
+                        {(yyval.cent) = insTdD(-1,(yyvsp[0].cent));}
 #line 1592 "asin.c"
     break;
 
+  case 64: /* listParamAct: expre COMA_ listParamAct  */
+#line 287 "src/asin.y"
+                               {(yyval.cent) = insTdD((yyvsp[0].cent),(yyvsp[-2].cent));}
+#line 1598 "asin.c"
+    break;
 
-#line 1596 "asin.c"
+
+#line 1602 "asin.c"
 
       default: break;
     }
@@ -1785,5 +1791,5 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 311 "src/asin.y"
+#line 317 "src/asin.y"
 

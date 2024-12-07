@@ -233,11 +233,17 @@ expreRel : expreAd
     ;
 
 expreAd : expreMul
-    | expreAd opAd expreMul     {$$ = T_ENTERO;}
+    | expreAd opAd expreMul     {
+                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion aditiva"); }
+                                        $$ = T_ENTERO;
+                                    }
     ;
 
 expreMul : expreUna             
-    | expreMul opMul expreUna   {$$ = T_ENTERO;}
+    | expreMul opMul expreUna   {
+                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion multiplicativa"); }
+                                        $$ = T_ENTERO;
+                                    }
     ;
 
 expreUna : expreSufi 
