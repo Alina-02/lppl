@@ -221,12 +221,15 @@ expreLogic : expreIgual
 
 expreIgual : expreRel
     | expreIgual opIgual expreRel {
-                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion de igualdad");$$=T_ERROR;};
+                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion de igualdad"); $$=T_ERROR;};
                                     }
     ;
 
 expreRel : expreAd
-    | expreRel opRel expreAd    {$$ = T_LOGICO;}
+    | expreRel opRel expreAd    {
+                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion relacional"); }
+                                        $$ = T_LOGICO;
+                                    }
     ;
 
 expreAd : expreMul
