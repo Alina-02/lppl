@@ -156,11 +156,11 @@ instExpre : expre PUNTOYCOMA_
 instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_    {
                                                                             SIMB sim = obtTdS($3);
                                                                             if (sim.t == T_ERROR) yyerror("Objeto no declarado");
-                                                                            else if (sim.t != T_ENTERO) yyerror("Error de tipos en la instrucción read");
+                                                                            else if (sim.t != T_ENTERO) yyerror("El argumento del read debe ser entero");
                                                                         } 
     | PRINT_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ PUNTOYCOMA_        {
                                                                             if ($3 == T_ERROR) yyerror("Objeto no declarado");
-                                                                            else if ($3 != T_ENTERO) yyerror("Error de tipos en la instrucción read");
+                                                                            else if ($3 != T_ENTERO) yyerror("La expresion del print debe ser entera");
                                                                         } 
     ;
 
@@ -170,16 +170,18 @@ instSelec : IF_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ inst ELSE_ inst  {
                                                                         }
   ;
 
-instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst   {
-                                                                                                            if($5 == T_ERROR) yyerror("Objeto no declarado");
-                                                                                                            else if($5 != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico");
-                                                                                                            if($3!=T_VACIO){
-                                                                                                                if($3 == T_ARRAY) yyerror("La expresión debe ser de tipo simple");
-                                                                                                            }
-                                                                                                            if($7!=T_VACIO){
-                                                                                                                if($7 == T_ARRAY) yyerror("La expresión debe ser de tipo simple");
-                                                                                                            }
-                                                                                                        }
+instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre { if($5 == T_ERROR) yyerror("Objeto no declarado");
+                                                            else if($5 != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico");
+                                                        }
+            PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst   {
+                                                                                                           
+                                                            if($3!=T_VACIO){
+                                                                if($3 == T_ARRAY) yyerror("La expresión debe ser de tipo simple");
+                                                            }
+                                                            if($8!=T_VACIO){
+                                                                if($8 == T_ARRAY) yyerror("La expresión debe ser de tipo simple");
+                                                            }
+                                                        }
     ;
 
 expreOP : {$$ = T_VACIO;} 
