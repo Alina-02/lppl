@@ -51,13 +51,13 @@ decla : declaVar
 
 declaVar : tipoSimp ID_ PUNTOYCOMA_ {
                                         if(!insTdS($2, VARIABLE, $1, niv, dvar, -1)) 
-                                            yyerror("Identificador repetido.");
+                                            yyerror("Identificador de variable repetido.");
                                         else    
                                             {dvar += TALLA_TIPO_SIMPLE;}
                                     }
     | tipoSimp ID_ IGUALVARIABLE_ const PUNTOYCOMA_ {
                                         if(!insTdS($2, VARIABLE, $1, niv, dvar, -1)){
-                                            yyerror("Identificador repetido.");
+                                            yyerror("Identificador de variable repetido.");
                                         }else{
                                             dvar += TALLA_TIPO_SIMPLE;
                                             if($4 != $1){
@@ -93,27 +93,27 @@ tipoSimp : INT_ {$$ = T_ENTERO;}
     ;
 
 declaFunc :tipoSimp ID_ {
-    cargaContexto(1);
-    niv = 1;
-    $<cent>$ = dvar;
-    dvar = 0;
-}
+                            cargaContexto(1);
+                            niv = 1;
+                            $<cent>$ = dvar;
+                            dvar = 0;
+                        }
 ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {
-    dvar = 0;
-    if(!insTdS($2,FUNCION,$1,0,0,$5)){
-        yyerror("Ya existe una funcion con el mismo nombre");
-    }
-    if(strcmp($2,"main") == 0){
-        funcmain++;
-    }
+                                                dvar = 0;
+                                                if(!insTdS($2,FUNCION,$1,0,0,$5)){
+                                                    yyerror("Ya existe una funcion con el mismo nombre");
+                                                }
+                                                if(strcmp($2,"main") == 0){
+                                                    funcmain++;
+                                            }
     
 } bloque {
-    mostrarTdS();
-    descargaContexto(niv);
-    niv = 0;
-    dvar = $<cent>3;
-    if ($8!= $1) yyerror("El tipo retornado y el de la funcion no coincide");
-}
+            mostrarTdS();
+            descargaContexto(niv);
+            niv = 0;
+            dvar = $<cent>3;
+            if ($8 != $1) yyerror("El tipo retornado y el de la funcion no coincide");
+        }
     ;
 
 paramForm :         {$$ = insTdD(-1,T_VACIO);}
@@ -122,15 +122,15 @@ paramForm :         {$$ = insTdD(-1,T_VACIO);}
 
 listParamForm : tipoSimp ID_   {
     $$ = insTdD(-1,$1);dvar -= TALLA_TIPO_SIMPLE + TALLA_SEGENLACES;
-    if(!insTdS($2,PARAMETRO,$1,niv,dvar,-1)) yyerror("Ya existe un parametro con el mismo nombre");
+    if(!insTdS($2,PARAMETRO,$1,niv,dvar,-1)) yyerror("Identificador de parámetro repetido");
     }
     | tipoSimp ID_ COMA_ listParamForm {
     $$ = insTdD($4,$1); dvar -= TALLA_TIPO_SIMPLE;
-    if(!insTdS($2,PARAMETRO,$1,niv,dvar,-1)) yyerror("Ya existe un parametro con el mismo nombre");
+    if(!insTdS($2,PARAMETRO,$1,niv,dvar,-1)) yyerror("Identificador de parámetro repetido");
     }
     ;
 
-bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_  {
+bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre {if($5 == T_ERROR){yyerror("Error en la declaración de la función");}} PUNTOYCOMA_ CIERRALLAVE_  {
     $$ = $5;
 } ;
 
@@ -164,10 +164,11 @@ instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_    {
                                                                         } 
     ;
 
-instSelec : IF_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ inst ELSE_ inst  {
-                                                                            if($3 == T_ERROR) yyerror("Expresión errónea");
-                                                                            else if ($3 != T_LOGICO) yyerror("La expresión if debe ser de tipo lógico");
-                                                                        }
+instSelec : IF_ ABREPARENTESIS_ expre {
+                                        if($3 == T_ERROR) yyerror("Expresión errónea");
+                                        else if ($3 != T_LOGICO) yyerror("La expresión if debe ser de tipo lógico");
+                                    } 
+            CIERRAPARENTESIS_ inst ELSE_ inst  
   ;
 
 instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre { if($5 == T_ERROR) yyerror("Objeto no declarado");

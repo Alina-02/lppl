@@ -5,13 +5,13 @@ bool X[20];
 bool main (int A, bool A)  // Identificador de parametro repetido
 {
   bool A;                  // Identificador de variable repetido
-  return 14;               // Error de tipos en el "return" 
+  return 14;               // Error de tipos en el "return" -> sale en la línea 9 y no en la 8
 }
 
 int Y (int A, bool B)   
 {
   int X[10];
-  return X;                // En la expresion del 'return'
+  return X;                // En la expresion del 'return' -> sale en la línea 15 y no en la 14
 }
 
 int main ()                // Identificador de funcion repetido
