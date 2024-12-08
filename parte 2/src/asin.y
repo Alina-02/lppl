@@ -6,6 +6,7 @@
     #include "header.h"
     #include "libtds.h"
     int funcmain = 0;
+    int functip = -1;
 %}
 
 //Declaraciones en Bison
@@ -24,7 +25,7 @@
 %token <ident> ID_ 
 %token <cent> CTE_ TRUE_ FALSE_ INT_ BOOL_
 %type <cent> tipoSimp declaFunc const listParamAct paramAct listParamForm paramForm
-%type <cent> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi bloque expreOP
+%type <cent> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP
 
 // Sección de reglas gramaticales
 
@@ -100,19 +101,20 @@ declaFunc :tipoSimp ID_ {
                         }
 ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {
                                                 dvar = 0;
+                                                functip = $1;
                                                 if(!insTdS($2,FUNCION,$1,0,0,$5)){
                                                     yyerror("Ya existe una funcion con el mismo nombre");
+                                                    functip = T_ERROR;
                                                 }
                                                 if(strcmp($2,"main") == 0){
                                                     funcmain++;
                                             }
     
 } bloque {
-            mostrarTdS();
+            if(verTdS)mostrarTdS();
             descargaContexto(niv);
             niv = 0;
             dvar = $<cent>3;
-            if ($8 != $1) yyerror("El tipo retornado y el de la funcion no coincide");
         }
     ;
 
@@ -130,10 +132,14 @@ listParamForm : tipoSimp ID_   {
     }
     ;
 
-bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre {if($5 == T_ERROR){yyerror("Error en la declaración de la función");}} PUNTOYCOMA_ CIERRALLAVE_  {
-    $$ = $5;
-} ;
-
+bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre {
+    if(functip == T_ERROR){yyerror("Error en la declaración de la función");}
+    else if (functip != $5){
+        yyerror("El tipo retornado no coincide con la función");
+    }
+    functip = -1;
+    } PUNTOYCOMA_ CIERRALLAVE_
+    ;
 declaVarLocal : 
     | declaVarLocal declaVar
     ;
@@ -217,40 +223,43 @@ expre : expreLogic
 
 expreLogic : expreIgual
     | expreLogic opLogic expreIgual {
-        if($1==T_ERROR|| $3==T_ERROR ) $$=T_ERROR;
+        if($1!=T_LOGICO|| $3!=T_LOGICO ) {
+            $$=T_ERROR;
+            yyerror("Error en la expresion lógica"); 
+        }
         else $$ = T_LOGICO;
     }
     ;
 
 expreIgual : expreRel
     | expreIgual opIgual expreRel {
-                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion de igualdad"); $$=T_ERROR;};
+                                        if ($1 != $3|| $1 != T_ENTERO || $3 != T_ENTERO  ) {yyerror("Error en expresion de igualdad"); $$=T_ERROR;};
                                     }
     ;
 
 expreRel : expreAd
     | expreRel opRel expreAd    {
-                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion relacional"); }
+                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion relacional");$$=T_ERROR; }
                                         $$ = T_LOGICO;
                                     }
     ;
 
 expreAd : expreMul
     | expreAd opAd expreMul     {
-                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion aditiva"); }
+                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion aditiva");$$=T_ERROR; }
                                         $$ = T_ENTERO;
                                     }
     ;
 
 expreMul : expreUna             
     | expreMul opMul expreUna   {
-                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion multiplicativa"); }
+                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion multiplicativa");$$=T_ERROR; }
                                         $$ = T_ENTERO;
                                     }
     ;
 
 expreUna : expreSufi 
-    | opUna expreUna            {$$ = T_ENTERO;}
+    | opUna expreUna            {$$ = T_LOGICO; if($2 != T_LOGICO) {yyerror("Error en la expresión unaria");$$=T_ERROR;}}
     ;
 
 expreSufi : const
