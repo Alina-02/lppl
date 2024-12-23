@@ -29,6 +29,10 @@
 // Sección de reglas gramaticales
 
 %%
+
+// inicializar las variables globales del compilador
+// reservar espacio variables globales del programa
+// emitir el salto al comienzo de la función "main"
 programa :  {dvar = 0; niv = 0;cargaContexto(niv);} 
             listDecla 
             {   if(funcmain == 0){
@@ -41,6 +45,9 @@ programa :  {dvar = 0; niv = 0;cargaContexto(niv);}
             }
         ;
 
+// comrpobar si el programa tiene "main"
+// completar reserva espacio para variables globales programa
+// completar salto al comienzo de la función "main"
 listDecla : decla 
     | listDecla decla
     ;
@@ -130,10 +137,18 @@ listParamForm : tipoSimp ID_   {
     }
     ;
 
+// cargar los enlaces de control
+// reserva de espacio para variables locales y temporales
 bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre PUNTOYCOMA_ CIERRALLAVE_  {
     $$ = $5;
 } ;
 
+// completa reserva espacio para variables locales y temporales
+// guardar valor de retorno
+// libera el segmento de vraiables locales y temporales
+// descarga de los enlaces de control
+// emite FIN si es "main" y RETURN si no lo es
+// mostrar la información de la función en la TdS
 declaVarLocal : 
     | declaVarLocal declaVar
     ;
@@ -236,6 +251,7 @@ expreUna : expreSufi
     | opUna expreUna            {$$ = T_ENTERO;}
     ;
 
+// reservar espacio para el valor de retorno
 expreSufi : const
     | ABREPARENTESIS_ expre CIERRAPARENTESIS_ {$$ = $2;}
     | ID_ {         SIMB sim = obtTdS($1); 
@@ -265,6 +281,9 @@ expreSufi : const
                                                     }
     ;
 
+// llamada a la función
+// desapilar el segmento de parámetros
+// desapilar y asignar el valor de retorno
 paramAct :          {$$ = insTdD(-1,T_VACIO);}
     | listParamAct
     ;
