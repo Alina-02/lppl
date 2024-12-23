@@ -240,7 +240,17 @@ expreRel : expreAd
     ;
 
 expreAd : expreMul
-    | expreAd opAd expreMul     {$$ = T_ENTERO;}
+    | expreAd opAd expreMul     
+    
+        {
+            $$ = T_ERROR;
+            if (($1.t == T_ENTERO) && ($3.t == T_ENTERO)) $$.t = T_ENTERO;
+            else yyerror("Error de tipos en la expresión aditiva.");
+
+            $$.d = creaVarTemp();
+            /** expresión a partir de un operador aritmético*/
+            emite($2, crArgPos(niv, $1.d), crArgPos(niv, $3.d), crArgPos(niv, $$.d));
+        }
     ;
 
 expreMul : expreUna             
