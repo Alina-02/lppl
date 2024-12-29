@@ -26,8 +26,8 @@
 %token ELSE_ MENIGUQ_ MAYIGUQ_ DIFCOMPARAR_  
 %token <ident> ID_ 
 %token <cent> CTE_ TRUE_ FALSE_ INT_ BOOL_
-%type <cent> tipoSimp declaFunc const listParamAct paramAct listParamForm paramForm
-%type <exp> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP
+%type <cent> tipoSimp const listParamAct paramAct listParamForm paramForm decla listDecla declaFunc
+%type <exp> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP 
 %type <cent> opLogic opIgual opRel opAd opMul opUna
 // Sección de reglas gramaticales
 
@@ -39,9 +39,9 @@
 programa :  {
             dvar = 0; niv = 0;
             cargaContexto(niv);
-            creaLans(si);
+            $<lista>$[0] = creaLans(si);
             emite(INCTOP,crArgNul(),crArgNul(),crArgEnt(0));
-            creaLans(si);
+            $<lista>$[1] = creaLans(si);
             emite(GOTOS,crArgNul(),crArgNul(),crArgEnt(0));
 
             } 
@@ -53,7 +53,8 @@ programa :  {
             else if (funcmain > 1){
                 yyerror("El programa tiene mas de una función main.");
             }
-
+                completaLans($<lista>1[0],crArgEnt(dvar));
+                completaLans($<lista>1[1],crArgEtq($2));
             }
         ;
 
@@ -61,11 +62,11 @@ programa :  {
 // completar reserva espacio para variables globales programa
 // completar salto al comienzo de la función "main"
 listDecla : decla 
-    | listDecla decla
+    | listDecla decla {$$ = $1 + $2;}
     ;
 
-decla : declaVar
-    | declaFunc
+decla : declaVar {$$ = 0;}
+    | declaFunc { $$ = $1;}
     ;
 
 declaVar : tipoSimp ID_ PUNTOYCOMA_ {
@@ -117,7 +118,7 @@ declaFunc :tipoSimp ID_ {
                             $<cent>$ = dvar;
                             dvar = 0;
                         }
-ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {
+ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {   $<cent>$ = 0;
                                                 dvar = 0;
                                                 functip = $1;
                                                 if(!insTdS($2,FUNCION,$1,0,0,$5)){
@@ -125,6 +126,7 @@ ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {
                                                     functip = T_ERROR;
                                                 }
                                                 if(strcmp($2,"main") == 0){
+                                                    $<cent>$ = si;
                                                     funcmain++;
                                             }
     
@@ -133,6 +135,7 @@ ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {
             descargaContexto(niv);
             niv = 0;
             dvar = $<cent>3;
+            $$ = $<cent>7;
         }
     ;
 
