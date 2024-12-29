@@ -26,8 +26,8 @@
 %token ELSE_ MENIGUQ_ MAYIGUQ_ DIFCOMPARAR_  
 %token <ident> ID_ 
 %token <cent> CTE_ TRUE_ FALSE_ INT_ BOOL_
-%type <cent> tipoSimp const listParamAct paramAct listParamForm paramForm decla listDecla declaFunc
-%type <exp> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP 
+%type <cent> tipoSimp listParamAct paramAct listParamForm paramForm decla listDecla declaFunc
+%type <exp> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP const
 %type <cent> opLogic opIgual opRel opAd opMul opUna
 // Sección de reglas gramaticales
 
@@ -80,10 +80,12 @@ declaVar : tipoSimp ID_ PUNTOYCOMA_ {
                                             yyerror("Identificador de variable repetido.");
                                         }else{
                                             dvar += TALLA_TIPO_SIMPLE;
-                                            if($4 != $1){
+                                            if($4.t != $1){
                                                 yyerror("Error de tipos en la inicialización de la variable.");
                                             }
                                         }
+                                        SIMB sim = obtTdS($2);
+                                        emite(EASIG,crArgPos($4.n,$4.d),crArgNul(),crArgPos(sim.n,sim.d));
                                     }
                                     
     | tipoSimp ID_ ABRECORCHETE_ CTE_ CIERRACORCHETE_ PUNTOYCOMA_ {
@@ -103,9 +105,17 @@ declaVar : tipoSimp ID_ PUNTOYCOMA_ {
                                     }
     ;
 
-const : CTE_ {$$ = T_ENTERO;}
-    | TRUE_  {$$ = T_LOGICO;}
-    | FALSE_ {$$ = T_LOGICO;}
+const : CTE_ {
+                $$.t = T_ENTERO; $$.n=niv; $$.d=creaVarTemp();
+                emite(EASIG, crArgEnt($1),crArgNul(),crArgPos($$.n,$$.d));
+            }
+    | TRUE_  {$$.t = T_LOGICO; $$.n=niv; $$.d=creaVarTemp();
+                emite(EASIG, crArgEnt(1),crArgNul(),crArgPos($$.n,$$.d));
+    
+    }
+    | FALSE_ {$$.t = T_LOGICO; $$.n=niv; $$.d=creaVarTemp();
+                emite(EASIG, crArgEnt(0),crArgNul(),crArgPos($$.n,$$.d));
+    }
     ;
 
 tipoSimp : INT_ {$$ = T_ENTERO;}
@@ -250,6 +260,10 @@ expre : expreLogic
                                             ((sim.t == T_LOGICO) && ($3.t == T_LOGICO))))
                                     yyerror("Error de tipos en la asignación.");
                                 else $$.t = sim.t;
+
+                                $$.d = sim.d;
+                                $$.n = sim.n;
+                                emite(EASIG, crArgPos(niv, $3.d), crArgNul(), crArgPos(sim.n, sim.d));   
                                 }
     | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ IGUALVARIABLE_ expre {SIMB sim = obtTdS($1); 
                                 if (sim.t == T_ERROR) yyerror("Objeto no declarado.");
@@ -263,10 +277,14 @@ expre : expreLogic
                                         yyerror("El indice del array debe ser entero.");
                                     }
                                 }
+
+                                $$.d = sim.d;
+                                $$.n = sim.n;
+                                emite(EVA, crArgPos(sim.n, sim.d) , crArgPos($3.n, $3.d), crArgPos($6.n, $6.d));
                                 }
     ;
 
-expreLogic : expreIgual
+expreLogic : expreIgual 
     | expreLogic opLogic expreIgual {
         if($1.t!=T_LOGICO|| $3.t !=T_LOGICO ) {
             $$.t=T_ERROR;
@@ -308,11 +326,13 @@ expreUna : expreSufi
     | opUna expreUna            {$$.t = T_LOGICO; if($2.t != T_LOGICO) {yyerror("Error en la expresión unaria.");$$.t=T_ERROR;}}
     ;
 
-expreSufi : const {$$.t = $1;}
-    | ABREPARENTESIS_ expre CIERRAPARENTESIS_ {$$.t  = $2.t;}
+expreSufi : const
+    | ABREPARENTESIS_ expre CIERRAPARENTESIS_ {$$  = $2;}
     | ID_ {         SIMB sim = obtTdS($1); 
                     if (sim.t == T_ERROR) yyerror("Objeto no declarado.");
                     $$.t = sim.t;
+                    $$.d=sim.d;
+                    $$.n=sim.n;
                     }
     | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ {
             SIMB sim = obtTdS($1);
@@ -328,6 +348,9 @@ expreSufi : const {$$.t = $1;}
                 yyerror("La variable no es una array");
                 $$.t = T_ERROR;
             }
+            $$.d = creaVarTemp();
+            $$.n = niv;
+            emite(EAV, crArgPos(sim.n,sim.d),crArgPos($3.n,$3.d) ,crArgPos(niv,$$.d));
         } 
     | ID_ {
             emite(INCTOP,crArgNul(),crArgNul(),crArgEnt(1));

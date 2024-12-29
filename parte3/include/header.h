@@ -26,8 +26,9 @@ extern int numErrores;              /* Contador del numero de errores        */
 
 
 typedef struct defestruct {
-    int t;
-    int d;
+    int t;  //tipo
+    int d;  //desplazamiento
+    int n;  //nivel
 }DEFESTRUCT;
 
 #endif  /* _HEADER_H */
