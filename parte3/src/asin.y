@@ -194,33 +194,33 @@ instSelec : IF_ ABREPARENTESIS_ expre {
             CIERRAPARENTESIS_ inst ELSE_ inst  
   ;
 
-instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre { if($5 == T_ERROR) yyerror("Objeto no declarado.");
-                                                            else if($5 != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico.");
+instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre { if($5.t == T_ERROR) yyerror("Objeto no declarado.");
+                                                            else if($5.t != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico.");
                                                         }
             PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst   {
                                                                                                            
-                                                            if($3!=T_VACIO){
-                                                                if($3 == T_ARRAY) yyerror("La expresión debe ser de tipo simple.");
+                                                            if($3.t!=T_VACIO){
+                                                                if($3.t == T_ARRAY) yyerror("La expresión debe ser de tipo simple.");
                                                             }
-                                                            if($8!=T_VACIO){
-                                                                if($8 == T_ARRAY) yyerror("La expresión debe ser de tipo simple.");
+                                                            if($8!.t=T_VACIO){
+                                                                if($8.t == T_ARRAY) yyerror("La expresión debe ser de tipo simple.");
                                                             }
                                                         }
     ;
 
-expreOP : {$$ = T_VACIO;} 
-    | expre {$$ = $1;} 
+expreOP : {$$.t = T_VACIO;} 
+    | expre {$$.t = $1;} 
     ;
 
 expre : expreLogic 
     | ID_ IGUALVARIABLE_ expre {SIMB sim = obtTdS($1); 
                                 if (sim.t == T_ERROR) yyerror("Objeto no declarado.");
-                                else if ($3 == T_ERROR) $$ = sim.t;
+                                else if ($3 == T_ERROR) $$.t = sim.t;
                                 else if ($3 == T_ARRAY) yyerror("La variable debe ser de tipo simple.");
                                 else if (!(((sim.t == T_ENTERO) && ($3 == T_ENTERO)) ||
                                             ((sim.t == T_LOGICO) && ($3 == T_LOGICO))))
                                     yyerror("Error de tipos en la asignación.");
-                                else $$ = sim.t;
+                                else $$.t = sim.t;
                                 }
     | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ IGUALVARIABLE_ expre {SIMB sim = obtTdS($1); 
                                 if (sim.t == T_ERROR) yyerror("Objeto no declarado.");
@@ -242,10 +242,10 @@ expre : expreLogic
 expreLogic : expreIgual
     | expreLogic opLogic expreIgual {
         if($1!=T_LOGICO|| $3!=T_LOGICO ) {
-            $$=T_ERROR;
+            $$.t=T_ERROR;
             yyerror("Error en la expresion lógica."); 
         }
-        else $$ = T_LOGICO;
+        else $$.t = T_LOGICO;
         fprintf(stdout,"%d Hola", $2);
     }
     ;
@@ -259,26 +259,26 @@ expreIgual : expreRel
 expreRel : expreAd
     | expreRel opRel expreAd    {
                                         if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion relacional.");$$=T_ERROR; }
-                                        $$ = T_LOGICO;
+                                        $$.t = T_LOGICO;
                                     }
     ;
 
 expreAd : expreMul
     | expreAd opAd expreMul     {
                                         if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion aditiva.");$$=T_ERROR; }
-                                        $$ = T_ENTERO;
+                                        $$.t = T_ENTERO;
                                     }
     ;
 
 expreMul : expreUna             
     | expreMul opMul expreUna   {
                                         if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion multiplicativa.");$$=T_ERROR; }
-                                        $$ = T_ENTERO;
+                                        $$.t = T_ENTERO;
                                     }
     ;
 
 expreUna : expreSufi 
-    | opUna expreUna            {$$ = T_LOGICO; if($2 != T_LOGICO) {yyerror("Error en la expresión unaria.");$$=T_ERROR;}}
+    | opUna expreUna            {$$.t = T_LOGICO; if($2 != T_LOGICO) {yyerror("Error en la expresión unaria.");$$=T_ERROR;}}
     ;
 
 expreSufi : const
