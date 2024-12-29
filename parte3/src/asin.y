@@ -27,7 +27,7 @@
 %token <ident> ID_ 
 %token <cent> CTE_ TRUE_ FALSE_ INT_ BOOL_
 %type <cent> tipoSimp listParamAct paramAct listParamForm paramForm decla listDecla declaFunc
-%type <exp> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP const
+%type <exp> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP const bloque
 %type <cent> opLogic opIgual opRel opAd opMul opUna
 // Sección de reglas gramaticales
 
@@ -132,7 +132,7 @@ declaFunc :tipoSimp ID_ {
 ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {   $<lista>$[0] = 0;
                                                 dvar = 0;
                                                 functip = $1;
-                                                if(!insTdS($2,FUNCION,$1,0,$<lista>3[0],$5)){
+                                                if(!insTdS($2,FUNCION,$1,0,si,$5)){
                                                     yyerror("Identificador de función repetido.");
                                                     functip = T_ERROR;
                                                 }
@@ -149,8 +149,10 @@ ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {   $<lista>$[0] = 0;
 } bloque {
 
             completaLans($<lista>7[1],crArgEnt(dvar));
-            $$ = $<lista>7[0];                
-            emite(FPTOP,crArgNul(),crArgNul(),crArgNul());
+            $$ = $<lista>7[0];
+            INF inf = obtTdD($5);
+            emite(EASIG,crArgPos($8.n,$8.d),crArgNul(),crArgPos(niv,-(TALLA_TIPO_SIMPLE+TALLA_SEGENLACES+inf.tsp)));               
+            emite(TOPFP,crArgNul(),crArgNul(),crArgNul());
             emite(FPPOP,crArgNul(),crArgNul(),crArgNul());
             if($<lista>7[0] != 0){
                 emite(FIN,crArgNul(),crArgNul(),crArgNul());
@@ -187,7 +189,10 @@ bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre {
         yyerror("El tipo retornado no coincide con la función.");
     }
     functip = -1;
-    } PUNTOYCOMA_ CIERRALLAVE_
+    } PUNTOYCOMA_ CIERRALLAVE_{
+        $$.d = $5.d;
+        $$.n = $5.n;
+    }
     ;
 
 // completa reserva espacio para variables locales y temporales
@@ -223,6 +228,7 @@ instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_    {
     | PRINT_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ PUNTOYCOMA_        {
                                                                             if ($3.t == T_ERROR) yyerror("Objeto no declarado.");
                                                                             else if ($3.t != T_ENTERO) yyerror("La expresión del print debe ser entera.");
+                                                                            emite(EWRITE,crArgNul(),crArgNul(),crArgPos($3.n,$3.d));
                                                                         } 
     ;
 
