@@ -21,6 +21,7 @@ extern char *yytext;                         /* Patron detectado             */
 extern void yyerror(const char * msg) ;   /* Tratamiento de errores          */
 
 extern int verbosidad;                   /* Flag si se desea una traza       */
+extern int verTdS;
 extern int numErrores;              /* Contador del numero de errores        */
 
 #endif  /* _HEADER_H */

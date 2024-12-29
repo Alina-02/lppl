@@ -5,6 +5,7 @@
     #include <string.h>
     #include "header.h"
     #include "libtds.h"
+    #include "libgci.h"
     int funcmain = 0;
     int functip = -1;
 %}
@@ -258,9 +259,6 @@ expreRel : expreAd
     | expreRel opRel expreAd    {
                                         if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion relacional.");$$=T_ERROR; }
                                         $$ = T_LOGICO;
-
-                                        $$.d = creaVarTemp();
-                                        emite($2, crArgPos(niv, $1.d), crArgPos(niv, $3.d), crArgPos(niv, $$.d));
                                     }
     ;
 
@@ -288,7 +286,21 @@ expreSufi : const
                     if (sim.t == T_ERROR) yyerror("Objeto no declarado.");
                     $$ = sim.t;
                     }
-    | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ {$$ = T_ENTERO;} 
+    | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ {
+            SIMB sim = obtTdS($1);
+            if(sim.t == T_ARRAY){
+                DIM dim = obtTdA(sim.ref);
+                $$ = dim.telem;
+            }
+            else if(sim.t == T_ERROR){
+                yyerror("Array no declarada");
+                $$ = T_ERROR;
+            }
+            else{
+                yyerror("La variable no es una array");
+                $$ = T_ERROR;
+            }
+        } 
     | ID_ ABREPARENTESIS_ paramAct CIERRAPARENTESIS_ {SIMB sim = obtTdS($1); 
                                                     if (sim.t == T_ERROR){
                                                         yyerror("Función no declarada.");
