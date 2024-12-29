@@ -26,8 +26,8 @@
 %token ELSE_ MENIGUQ_ MAYIGUQ_ DIFCOMPARAR_  
 %token <ident> ID_ 
 %token <cent> CTE_ TRUE_ FALSE_ INT_ BOOL_
-%type <cent> tipoSimp const listParamAct paramAct listParamForm paramForm decla listDecla declaFunc
-%type <exp> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP 
+%type <cent> tipoSimp listParamAct paramAct listParamForm paramForm decla listDecla declaFunc
+%type <exp> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP const
 %type <cent> opLogic opIgual opRel opAd opMul opUna
 // Sección de reglas gramaticales
 
@@ -80,10 +80,12 @@ declaVar : tipoSimp ID_ PUNTOYCOMA_ {
                                             yyerror("Identificador de variable repetido.");
                                         }else{
                                             dvar += TALLA_TIPO_SIMPLE;
-                                            if($4 != $1){
+                                            if($4.t != $1){
                                                 yyerror("Error de tipos en la inicialización de la variable.");
                                             }
                                         }
+                                        SIMB sim = obtTdS($2);
+                                        emite(EASIG,crArgPos($4.n,$4.d),crArgNul(),crArgPos(sim.n,sim.d));
                                     }
                                     
     | tipoSimp ID_ ABRECORCHETE_ CTE_ CIERRACORCHETE_ PUNTOYCOMA_ {
@@ -103,9 +105,17 @@ declaVar : tipoSimp ID_ PUNTOYCOMA_ {
                                     }
     ;
 
-const : CTE_ {$$ = T_ENTERO;}
-    | TRUE_  {$$ = T_LOGICO;}
-    | FALSE_ {$$ = T_LOGICO;}
+const : CTE_ {
+                $$.t = T_ENTERO; $$.n=niv; $$.d=creaVarTemp();
+                emite(EASIG, crArgEnt($1),crArgNul(),crArgPos($$.n,$$.d));
+            }
+    | TRUE_  {$$.t = T_LOGICO; $$.n=niv; $$.d=creaVarTemp();
+                emite(EASIG, crArgEnt(1),crArgNul(),crArgPos($$.n,$$.d));
+    
+    }
+    | FALSE_ {$$.t = T_LOGICO; $$.n=niv; $$.d=creaVarTemp();
+                emite(EASIG, crArgEnt(0),crArgNul(),crArgPos($$.n,$$.d));
+    }
     ;
 
 tipoSimp : INT_ {$$ = T_ENTERO;}
