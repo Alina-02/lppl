@@ -117,26 +117,42 @@ declaFunc :tipoSimp ID_ {
                             niv = 1;
                             $<cent>$ = dvar;
                             dvar = 0;
+
                         }
-ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {   $<cent>$ = 0;
+ABREPARENTESIS_ paramForm CIERRAPARENTESIS_ {   $<lista>$[0] = 0;
                                                 dvar = 0;
                                                 functip = $1;
-                                                if(!insTdS($2,FUNCION,$1,0,0,$5)){
+                                                if(!insTdS($2,FUNCION,$1,0,$<lista>3[0],$5)){
                                                     yyerror("Identificador de función repetido.");
                                                     functip = T_ERROR;
                                                 }
                                                 if(strcmp($2,"main") == 0){
-                                                    $<cent>$ = si;
+                                                    $<lista>$[0] = si;
                                                     funcmain++;
-                                            }
+                                                }
+                                                emite(PUSHFP,crArgNul(),crArgNul(),crArgNul());
+                                                emite(FPTOP,crArgNul(),crArgNul(),crArgNul());
+                                                $<lista>$[1] = creaLans(si);
+                                                emite(INCTOP,crArgNul(),crArgNul(),crArgNul());
+
     
 } bloque {
+
+            completaLans($<lista>7[1],crArgEnt(dvar));
+            $$ = $<lista>7[0];                
+            emite(FPTOP,crArgNul(),crArgNul(),crArgNul());
+            emite(FPPOP,crArgNul(),crArgNul(),crArgNul());
+            if($<lista>7[0] != 0){
+                emite(FIN,crArgNul(),crArgNul(),crArgNul());
+            }else{
+                emite(RET,crArgNul(),crArgNul(),crArgNul());
+            }
             if(verTdS)mostrarTdS();
             descargaContexto(niv);
             niv = 0;
             dvar = $<cent>3;
-            $$ = $<cent>7;
         }
+
     ;
 
 paramForm :         {$$ = insTdD(-1,T_VACIO);}
@@ -313,7 +329,11 @@ expreSufi : const {$$.t = $1;}
                 $$.t = T_ERROR;
             }
         } 
-    | ID_ ABREPARENTESIS_ paramAct CIERRAPARENTESIS_ {SIMB sim = obtTdS($1); 
+    | ID_ {
+            $<exp>$.d = creaVarTemp();
+            emite(INCTOP,crArgNul(),crArgNul(),crArgEnt(1));
+        }
+    ABREPARENTESIS_ paramAct CIERRAPARENTESIS_ {SIMB sim = obtTdS($1); 
                                                     if (sim.t == T_ERROR){
                                                         yyerror("Función no declarada.");
                                                         $$.t = T_ERROR;
@@ -326,11 +346,13 @@ expreSufi : const {$$.t = $1;}
                                                         yyerror("La variable no es una función.");
                                                         $$.t = T_ERROR;
                                                     }
-                                                    else if(!cmpDom($3,sim.ref)){
+                                                    else if(!cmpDom($4,sim.ref)){
                                                         yyerror("Número o tipo de parámetros no coincide.");
                                                         $$.t = T_ERROR;
                                                     }else{
                                                         $$.t = sim.t;
+
+
                                                         }
                                                     }
     ;
@@ -339,8 +361,13 @@ paramAct :          {$$ = insTdD(-1,T_VACIO);}
     | listParamAct
     ;
 
-listParamAct : expre    {$$ = insTdD(-1,$1.t);}
-    | expre COMA_ listParamAct {$$ = insTdD($3,$1.t);}
+listParamAct : expre    {   $$ = insTdD(-1,$1.t);
+                            emite(EPUSH,crArgNul(),crArgNul(),crArgNul($1.d));
+                        }
+    | expre COMA_ listParamAct {
+            $$ = insTdD($3,$1.t);
+            emite(EPUSH,crArgNul(),crArgNul(),crArgNul($1.d));
+    }
     ;
 
 opLogic : AND_ {$$ = EMULT;}
