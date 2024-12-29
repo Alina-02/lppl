@@ -144,7 +144,7 @@ listParamForm : tipoSimp ID_   {
 // reserva de espacio para variables locales temporales
 bloque : ABRELLAVE_ declaVarLocal listInst RETURN_ expre {
     if(functip == T_ERROR){yyerror("Error en la declaración de la función.");}
-    else if (functip != $5){
+    else if (functip != $5.t){
         yyerror("El tipo retornado no coincide con la función.");
     }
     functip = -1;
@@ -182,20 +182,20 @@ instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_    {
                                                                             else if (sim.t != T_ENTERO) yyerror("El argumento del read debe ser entero.");
                                                                         } 
     | PRINT_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ PUNTOYCOMA_        {
-                                                                            if ($3 == T_ERROR) yyerror("Objeto no declarado.");
-                                                                            else if ($3 != T_ENTERO) yyerror("La expresión del print debe ser entera.");
+                                                                            if ($3.t == T_ERROR) yyerror("Objeto no declarado.");
+                                                                            else if ($3.t != T_ENTERO) yyerror("La expresión del print debe ser entera.");
                                                                         } 
     ;
 
 instSelec : IF_ ABREPARENTESIS_ expre {
-                                        if($3 == T_ERROR) yyerror("Expresión errónea.");
-                                        else if ($3 != T_LOGICO) yyerror("La expresión if debe ser de tipo lógico.");
+                                        if($3.t == T_ERROR) yyerror("Expresión errónea.");
+                                        else if ($3.t != T_LOGICO) yyerror("La expresión if debe ser de tipo lógico.");
                                     } 
             CIERRAPARENTESIS_ inst ELSE_ inst  
   ;
 
-instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre { if($5 == T_ERROR) yyerror("Objeto no declarado.");
-                                                            else if($5 != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico.");
+instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre { if($5.t == T_ERROR) yyerror("Objeto no declarado.");
+                                                            else if($5.t != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico.");
                                                         }
             PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst   {
                                                                                                            
