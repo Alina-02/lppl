@@ -330,7 +330,6 @@ expreSufi : const {$$.t = $1;}
             }
         } 
     | ID_ {
-            $<exp>$.d = creaVarTemp();
             emite(INCTOP,crArgNul(),crArgNul(),crArgEnt(1));
         }
     ABREPARENTESIS_ paramAct CIERRAPARENTESIS_ {SIMB sim = obtTdS($1); 
@@ -351,7 +350,12 @@ expreSufi : const {$$.t = $1;}
                                                         $$.t = T_ERROR;
                                                     }else{
                                                         $$.t = sim.t;
-
+                                                        $$.n = niv;
+                                                        $$.d = creaVarTemp();
+                                                        INF inf = obtTdD(sim.ref);
+                                                        emite(CALL,crArgNul(),crArgNul(),crArgEtq(sim.d));
+                                                        emite(DECTOP,crArgNul(),crArgNul(),crArgEnt(inf.tsp));
+                                                        emite(EPOP,crArgNul(),crArgNul(),crArgPos($$.n,$$.d));
 
                                                         }
                                                     }
