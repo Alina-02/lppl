@@ -16,6 +16,7 @@
     int cent;
     char *ident;
     DEFESTRUCT exp;
+    int lista[5];
 }
 
 
@@ -35,9 +36,18 @@
 // inicializar las variables globales del compilador
 // reservar espacio variables globales del programa
 // emitir el salto al comienzo de la función "main"
-programa :  {dvar = 0; niv = 0;cargaContexto(niv);} 
+programa :  {
+            dvar = 0; niv = 0;
+            cargaContexto(niv);
+            creaLans(si);
+            emite(INCTOP,crArgNul(),crArgNul(),crArgEnt(0));
+            creaLans(si);
+            emite(GOTOS,crArgNul(),crArgNul(),crArgEnt(0));
+
+            } 
             listDecla 
-            {   if(funcmain == 0){
+            {   
+                if(funcmain == 0){
                 yyerror("El programa no tiene función main.");
             }
             else if (funcmain > 1){
@@ -199,26 +209,26 @@ instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre { if($5.t == T_ERROR) 
                                                         }
             PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst   {
                                                                                                            
-                                                            if($3.t!=T_VACIO){
+                                                            if($3.t !=T_VACIO){
                                                                 if($3.t == T_ARRAY) yyerror("La expresión debe ser de tipo simple.");
                                                             }
-                                                            if($8!.t=T_VACIO){
+                                                            if($8.t != T_VACIO){
                                                                 if($8.t == T_ARRAY) yyerror("La expresión debe ser de tipo simple.");
                                                             }
                                                         }
     ;
 
 expreOP : {$$.t = T_VACIO;} 
-    | expre {$$.t = $1;} 
+    | expre {$$.t = $1.t;} 
     ;
 
 expre : expreLogic 
     | ID_ IGUALVARIABLE_ expre {SIMB sim = obtTdS($1); 
                                 if (sim.t == T_ERROR) yyerror("Objeto no declarado.");
-                                else if ($3 == T_ERROR) $$.t = sim.t;
-                                else if ($3 == T_ARRAY) yyerror("La variable debe ser de tipo simple.");
-                                else if (!(((sim.t == T_ENTERO) && ($3 == T_ENTERO)) ||
-                                            ((sim.t == T_LOGICO) && ($3 == T_LOGICO))))
+                                else if ($3.t == T_ERROR) $$.t = sim.t;
+                                else if ($3.t == T_ARRAY) yyerror("La variable debe ser de tipo simple.");
+                                else if (!(((sim.t == T_ENTERO) && ($3.t == T_ENTERO)) ||
+                                            ((sim.t == T_LOGICO) && ($3.t == T_LOGICO))))
                                     yyerror("Error de tipos en la asignación.");
                                 else $$.t = sim.t;
                                 }
@@ -227,13 +237,11 @@ expre : expreLogic
                                 else if(sim.t != T_ARRAY) yyerror("La variable debe ser de tipo array.");
                                 else{
                                     DIM array = obtTdA(sim.ref);
-                                    if(array.telem != $6){
+                                    if(array.telem != $6.t){
                                         yyerror("Error de tipos en la asignacion a un array.");
                                     }
-                                    if($3 != T_ENTERO){
+                                    if($3.t != T_ENTERO){
                                         yyerror("El indice del array debe ser entero.");
-                                    }else if($3 >= array.nelem){
-                                        yyerror("Indice fuera de rango.");
                                     }
                                 }
                                 }
@@ -241,7 +249,7 @@ expre : expreLogic
 
 expreLogic : expreIgual
     | expreLogic opLogic expreIgual {
-        if($1!=T_LOGICO|| $3!=T_LOGICO ) {
+        if($1.t!=T_LOGICO|| $3.t !=T_LOGICO ) {
             $$.t=T_ERROR;
             yyerror("Error en la expresion lógica."); 
         }
@@ -252,74 +260,74 @@ expreLogic : expreIgual
 
 expreIgual : expreRel
     | expreIgual opIgual expreRel {
-                                        if ($1 != $3|| $1 != T_ENTERO || $3 != T_ENTERO  ) {yyerror("Error en expresion de igualdad."); $$=T_ERROR;};
+                                        if ($1.t != $3.t || $1.t  != T_ENTERO || $3.t  != T_ENTERO  ) {yyerror("Error en expresion de igualdad."); $$.t=T_ERROR;};
                                     }
     ;
 
 expreRel : expreAd
     | expreRel opRel expreAd    {
-                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion relacional.");$$=T_ERROR; }
+                                        if ($1.t != $3.t || $1.t  == T_ERROR|| $3.t == T_ERROR  ) {yyerror("Error en expresion relacional.");$$.t=T_ERROR; }
                                         $$.t = T_LOGICO;
                                     }
     ;
 
 expreAd : expreMul
     | expreAd opAd expreMul     {
-                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion aditiva.");$$=T_ERROR; }
+                                        if ($1.t  != $3.t || $1.t  == T_ERROR|| $3.t  == T_ERROR  ) {yyerror("Error en expresion aditiva.");$$.t=T_ERROR; }
                                         $$.t = T_ENTERO;
                                     }
     ;
 
 expreMul : expreUna             
     | expreMul opMul expreUna   {
-                                        if ($1 != $3|| $1 == T_ERROR|| $3 == T_ERROR  ) {yyerror("Error en expresion multiplicativa.");$$=T_ERROR; }
+                                        if ($1.t  != $3.t || $1.t  == T_ERROR|| $3.t  == T_ERROR  ) {yyerror("Error en expresion multiplicativa.");$$.t=T_ERROR; }
                                         $$.t = T_ENTERO;
                                     }
     ;
 
 expreUna : expreSufi 
-    | opUna expreUna            {$$.t = T_LOGICO; if($2 != T_LOGICO) {yyerror("Error en la expresión unaria.");$$=T_ERROR;}}
+    | opUna expreUna            {$$.t = T_LOGICO; if($2.t != T_LOGICO) {yyerror("Error en la expresión unaria.");$$.t=T_ERROR;}}
     ;
 
-expreSufi : const
-    | ABREPARENTESIS_ expre CIERRAPARENTESIS_ {$$ = $2;}
+expreSufi : const {$$.t = $1;}
+    | ABREPARENTESIS_ expre CIERRAPARENTESIS_ {$$.t  = $2.t;}
     | ID_ {         SIMB sim = obtTdS($1); 
                     if (sim.t == T_ERROR) yyerror("Objeto no declarado.");
-                    $$ = sim.t;
+                    $$.t = sim.t;
                     }
     | ID_ ABRECORCHETE_ expre CIERRACORCHETE_ {
             SIMB sim = obtTdS($1);
             if(sim.t == T_ARRAY){
                 DIM dim = obtTdA(sim.ref);
-                $$ = dim.telem;
+                $$.t = dim.telem;
             }
             else if(sim.t == T_ERROR){
                 yyerror("Array no declarada");
-                $$ = T_ERROR;
+                $$.t = T_ERROR;
             }
             else{
                 yyerror("La variable no es una array");
-                $$ = T_ERROR;
+                $$.t = T_ERROR;
             }
         } 
     | ID_ ABREPARENTESIS_ paramAct CIERRAPARENTESIS_ {SIMB sim = obtTdS($1); 
                                                     if (sim.t == T_ERROR){
                                                         yyerror("Función no declarada.");
-                                                        $$ = T_ERROR;
+                                                        $$.t = T_ERROR;
                                                     } 
                                                     else if(sim.t == T_ARRAY){
                                                         yyerror("La variable no es una función.");
-                                                        $$ = T_ERROR;
+                                                        $$.t = T_ERROR;
                                                     }
                                                     else if(sim.ref == -1){
                                                         yyerror("La variable no es una función.");
-                                                        $$ = T_ERROR;
+                                                        $$.t = T_ERROR;
                                                     }
                                                     else if(!cmpDom($3,sim.ref)){
                                                         yyerror("Número o tipo de parámetros no coincide.");
-                                                        $$ = T_ERROR;
+                                                        $$.t = T_ERROR;
                                                     }else{
-                                                        $$ = sim.t;
+                                                        $$.t = sim.t;
                                                         }
                                                     }
     ;
@@ -328,8 +336,8 @@ paramAct :          {$$ = insTdD(-1,T_VACIO);}
     | listParamAct
     ;
 
-listParamAct : expre    {$$ = insTdD(-1,$1);}
-    | expre COMA_ listParamAct {$$ = insTdD($3,$1);}
+listParamAct : expre    {$$ = insTdD(-1,$1.t);}
+    | expre COMA_ listParamAct {$$ = insTdD($3,$1.t);}
     ;
 
 opLogic : AND_ {$$ = EMULT;}
