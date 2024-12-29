@@ -96,12 +96,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "src/asin.y"
+#line 15 "src/asin.y"
 
     int cent;
     char *ident;
+    DEFESTRUCT exp;
 
-#line 105 "asin.h"
+#line 106 "asin.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

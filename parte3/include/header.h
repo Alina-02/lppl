@@ -24,5 +24,11 @@ extern int verbosidad;                   /* Flag si se desea una traza       */
 extern int verTdS;
 extern int numErrores;              /* Contador del numero de errores        */
 
+
+typedef struct defestruct {
+    int t;
+    int d;
+}DEFESTRUCT;
+
 #endif  /* _HEADER_H */
 /*****************************************************************************/

@@ -15,19 +15,19 @@
 %union{
     int cent;
     char *ident;
+    DEFESTRUCT exp;
 }
 
 
 %token RETURN_ READ_ PRINT_ IF_ FOR_
 %token IGUALVARIABLE_ PUNTOYCOMA_ ABRECORCHETE_ CIERRACORCHETE_ ABREPARENTESIS_ CIERRAPARENTESIS_
 %token ABRELLAVE_ CIERRALLAVE_ AND_ OR_ DIF_ MENQ_ MAYQ_ SUM_ RES_ MULT_ DIV_ COMA_ IGUALCOMPARAR_
-%token ELSE_ MENIGUQ_ MAYIGUQ_ DIFCOMPARAR_ 
-
+%token ELSE_ MENIGUQ_ MAYIGUQ_ DIFCOMPARAR_  
 %token <ident> ID_ 
 %token <cent> CTE_ TRUE_ FALSE_ INT_ BOOL_
 %type <cent> tipoSimp declaFunc const listParamAct paramAct listParamForm paramForm
-%type <cent> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP
-
+%type <exp> expre expreLogic expreIgual expreRel expreAd expreMul expreUna expreSufi expreOP
+%type <cent> opLogic opIgual opRel opAd opMul opUna
 // Sección de reglas gramaticales
 
 %%
@@ -246,6 +246,7 @@ expreLogic : expreIgual
             yyerror("Error en la expresion lógica."); 
         }
         else $$ = T_LOGICO;
+        fprintf(stdout,"%d Hola", $2);
     }
     ;
 
@@ -331,31 +332,31 @@ listParamAct : expre    {$$ = insTdD(-1,$1);}
     | expre COMA_ listParamAct {$$ = insTdD($3,$1);}
     ;
 
-opLogic : AND_
-    | OR_
+opLogic : AND_ {$$ = EMULT;}
+    | OR_ {$$ = ESUM;}
     ;
 
-opIgual : IGUALCOMPARAR_
-    | DIFCOMPARAR_
+opIgual : IGUALCOMPARAR_ {$$ = EIGUAL ;}
+    | DIFCOMPARAR_ {$$ = EDIST ;}
+    ;
+ 
+opRel : MAYQ_ {$$ = EMAY ;}
+    | MENQ_ {$$ = EMEN ;}
+    | MAYIGUQ_ {$$ = EMAYEQ ;}
+    | MENIGUQ_ {$$ = EMENEQ ;}
     ;
 
-opRel : MAYQ_
-    | MENQ_
-    | MAYIGUQ_
-    | MENIGUQ_
+opAd : SUM_ {$$ = ESUM ;}
+    | RES_ {$$ = EDIF ;}
     ;
 
-opAd : SUM_
-    | RES_
+opMul : MULT_ {$$ = EMULT ;}
+    | DIV_ {$$ = EDIVI ;}
     ;
 
-opMul : MULT_ 
-    | DIV_
-    ;
-
-opUna : SUM_ 
-    | RES_ 
-    | DIF_ 
+opUna : SUM_ {$$ = ESUM ;}
+    | RES_ {$$ = EDIF ;}
+    | DIF_ {$$ = ESIG ;}
     ;
 
 %%
