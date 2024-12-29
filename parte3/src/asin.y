@@ -224,6 +224,7 @@ instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_    {
                                                                             SIMB sim = obtTdS($3);
                                                                             if (sim.t == T_ERROR) yyerror("Objeto no declarado.");
                                                                             else if (sim.t != T_ENTERO) yyerror("El argumento del read debe ser entero.");
+                                                                            emite(EREAD,crArgNul(),crArgNul(),crArgPos(sim.n,sim.d));
                                                                         } 
     | PRINT_ ABREPARENTESIS_ expre CIERRAPARENTESIS_ PUNTOYCOMA_        {
                                                                             if ($3.t == T_ERROR) yyerror("Objeto no declarado.");
