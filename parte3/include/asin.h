@@ -101,8 +101,9 @@ union YYSTYPE
     int cent;
     char *ident;
     DEFESTRUCT exp;
+    int lista[5];
 
-#line 106 "asin.h"
+#line 107 "asin.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

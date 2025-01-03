@@ -304,29 +304,46 @@ expreLogic : expreIgual
 
 expreIgual : expreRel
     | expreIgual opIgual expreRel {
-                                        if ($1.t != $3.t || $1.t  != T_ENTERO || $3.t  != T_ENTERO  ) {yyerror("Error en expresion de igualdad."); $$.t=T_ERROR;};
-                                    }
+                                     
+                                    $$.t = T_ERROR;
+                                    if(($1.t == T_ENTERO) && ($3.t == T_ENTERO)) $$.t = T_ENTERO;
+                                    else {yyerror("Error en expresion de igualdad.");}
+
+                                    $$.d = creaVarTemp();
+                                    emite($2, crArgPos(niv, $1.d), crArgPos(niv, $3.d), crArgPos(niv, $$.d));
+                                }
     ;
 
 expreRel : expreAd
     | expreRel opRel expreAd    {
-                                        if ($1.t != $3.t || $1.t  == T_ERROR|| $3.t == T_ERROR  ) {yyerror("Error en expresion relacional.");$$.t=T_ERROR; }
-                                        $$.t = T_LOGICO;
-                                    }
+                                    $$.t = T_ERROR;
+                                    if(($1.t == T_ENTERO) && ($3.t == T_ENTERO)) $$.t = T_ENTERO;
+                                    else {yyerror("Error en expresion relacional.");}
+
+                                    $$.d = creaVarTemp();
+                                    emite($2, crArgPos(niv, $1.d), crArgPos(niv, $3.d), crArgPos(niv, $$.d));
+                                }
     ;
 
 expreAd : expreMul
     | expreAd opAd expreMul     {
-                                        if ($1.t  != $3.t || $1.t  == T_ERROR|| $3.t  == T_ERROR  ) {yyerror("Error en expresion aditiva.");$$.t=T_ERROR; }
-                                        $$.t = T_ENTERO;
-                                    }
-    ;
+                                    $$.t = T_ERROR;
+                                    if(($1.t == T_ENTERO) && ($3.t == T_ENTERO)) $$.t = T_ENTERO;
+                                    else {yyerror("Error en expresion aditiva.");}
+
+                                    $$.d = creaVarTemp();
+                                    emite($2, crArgPos(niv, $1.d), crArgPos(niv, $3.d), crArgPos(niv, $$.d));
+                                }
 
 expreMul : expreUna             
     | expreMul opMul expreUna   {
-                                        if ($1.t  != $3.t || $1.t  == T_ERROR|| $3.t  == T_ERROR  ) {yyerror("Error en expresion multiplicativa.");$$.t=T_ERROR; }
-                                        $$.t = T_ENTERO;
-                                    }
+                                    $$.t = T_ERROR;
+                                    if(($1.t == T_ENTERO) && ($3.t == T_ENTERO)) $$.t = T_ENTERO;
+                                    else {yyerror("Error en expresion multiplicativa.");}
+
+                                    $$.d = creaVarTemp();
+                                    emite($2, crArgPos(niv, $1.d), crArgPos(niv, $3.d), crArgPos(niv, $$.d));
+                                }
     ;
 
 expreUna : expreSufi 
