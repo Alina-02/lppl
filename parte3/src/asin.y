@@ -236,21 +236,36 @@ instEntSal : READ_ ABREPARENTESIS_ ID_ CIERRAPARENTESIS_ PUNTOYCOMA_    {
 instSelec : IF_ ABREPARENTESIS_ expre {
                                         if($3.t == T_ERROR) yyerror("Expresión errónea.");
                                         else if ($3.t != T_LOGICO) yyerror("La expresión if debe ser de tipo lógico.");
+                                        $<cent>$ = creaLans(si);
+                                        emite(EIGUAL,crArgPos($3.n,$3.d),crArgEnt(0),crArgEnt(-1));
                                     } 
-            CIERRAPARENTESIS_ inst ELSE_ inst  
+            CIERRAPARENTESIS_ inst {
+                $<cent>$ = creaLans(si);
+                emite(GOTOS,crArgNul(),crArgNul(),crArgNul());
+                completaLans($<cent>4,crArgEtq(si));
+            } ELSE_ inst  {
+                completaLans($<cent>7,crArgEtq(si));
+            }
   ;
 
-instIter : FOR_ ABREPARENTESIS_ expreOP PUNTOYCOMA_ expre { if($5.t == T_ERROR) yyerror("Objeto no declarado.");
-                                                            else if($5.t != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico.");
+instIter : FOR_ ABREPARENTESIS_ expreOP {$<cent>$ = si;} PUNTOYCOMA_ expre { if($6.t == T_ERROR) yyerror("Objeto no declarado.");
+                                                            else if($6.t != T_LOGICO) yyerror("La expresión for debe ser de tipo lógico.");
+                                                            
+                                                            $<lista>$[0] = creaLans(si);
+                                                            emite(EIGUAL,crArgPos($6.n,$6.d),crArgEnt(0),crArgEnt(-1));
+                                                            $<lista>$[1] = creaLans(si);
+                                                            emite(GOTOS,crArgNul(),crArgNul(),crArgNul());
                                                         }
-            PUNTOYCOMA_ expreOP CIERRAPARENTESIS_ inst   {
+            PUNTOYCOMA_ {$<cent>$ = si;} expreOP {emite(GOTOS,crArgNul(),crArgNul(),crArgEtq($<cent>4));} CIERRAPARENTESIS_ {completaLans($<lista>7[1],crArgEtq(si));} inst   {
                                                                                                            
                                                             if($3.t !=T_VACIO){
                                                                 if($3.t == T_ARRAY) yyerror("La expresión debe ser de tipo simple.");
                                                             }
-                                                            if($8.t != T_VACIO){
-                                                                if($8.t == T_ARRAY) yyerror("La expresión debe ser de tipo simple.");
+                                                            if($10.t != T_VACIO){
+                                                                if($10.t == T_ARRAY) yyerror("La expresión debe ser de tipo simple.");
                                                             }
+                                                            emite(GOTOS,crArgNul(),crArgNul(),crArgEtq($<cent>9));
+                                                            completaLans($<lista>7[0],crArgEtq(si));
                                                         }
     ;
 
@@ -291,63 +306,94 @@ expre : expreLogic
                                 }
     ;
 
-expreLogic : expreIgual 
+expreLogic : expreIgual
     | expreLogic opLogic expreIgual {
-        if($1.t!=T_LOGICO|| $3.t !=T_LOGICO ) {
-            $$.t=T_ERROR;
+        if($1.t !=T_LOGICO|| $3.t !=T_LOGICO ) {
+            $$.t =T_ERROR;
             yyerror("Error en la expresion lógica."); 
         }
-        else $$.t = T_LOGICO;
-        fprintf(stdout,"%d Hola", $2);
+        else {$$.t = T_LOGICO;}
+        $$.d = creaVarTemp();
+        $$.n = niv;
+        if($2 == ESUM){
+            emite(ESUM,crArgPos($1.n, $1.d), crArgPos($3.n, $3.d),crArgPos($$.n,$$.d));
+            emite(EMENEQ, crArgPos($$.n, $$.d), crArgEnt(1), crArgEtq(si+2));
+            emite(EASIG,crArgEnt(1),crArgNul(),crArgPos($$.n,$$.d));
+        }else{
+            emite($2,crArgPos($1.n,$1.d),crArgPos($3.n,$3.d),crArgPos($$.n,$$.d));
+        }
     }
+
     ;
 
 expreIgual : expreRel
     | expreIgual opIgual expreRel {
                                      
-                                    $$.t = T_ERROR;
-                                    if(($1.t == T_ENTERO) && ($3.t == T_ENTERO)) $$.t = T_ENTERO;
-                                    else {yyerror("Error en expresion de igualdad.");}
-
+                                    $$.t = T_LOGICO;
+                                    if ($1.t != $3.t || $1.t != T_ENTERO || $3.t != T_ENTERO  ) 
+                                    {yyerror("Error en expresion de igualdad."); $$.t =T_ERROR;}
+                                    $$.n = niv;
                                     $$.d = creaVarTemp();
-                                    emite($2, crArgPos(niv, $1.d), crArgPos(niv, $3.d), crArgPos(niv, $$.d));
+                                    emite(EASIG,crArgEnt(1),crArgNul(),crArgPos($$.n,$$.d));
+                                    emite($2, crArgPos($1.n, $1.d), crArgPos($3.n, $3.d), crArgEtq(si+2));
+                                    emite(EASIG,crArgEnt(0),crArgNul(),crArgPos($$.n,$$.d));
                                 }
     ;
 
 expreRel : expreAd
     | expreRel opRel expreAd    {
-                                    $$.t = T_ERROR;
-                                    if(($1.t == T_ENTERO) && ($3.t == T_ENTERO)) $$.t = T_ENTERO;
-                                    else {yyerror("Error en expresion relacional.");}
+                                    $$.t = T_LOGICO;
+                                    if ($1.t != $3.t || $1.t == T_ERROR|| $3.t == T_ERROR  ) 
+                                    {yyerror("Error en expresion relacional.");$$.t =T_ERROR;}
 
                                     $$.d = creaVarTemp();
-                                    emite($2, crArgPos(niv, $1.d), crArgPos(niv, $3.d), crArgPos(niv, $$.d));
+                                    $$.n = niv;
+                                    emite(EASIG,crArgEnt(1),crArgNul(),crArgPos($$.n ,$$.d));
+                                    emite($2, crArgPos($1.n, $1.d), crArgPos($3.n , $3.d), crArgEtq(si+2));
+                                    emite(EASIG,crArgEnt(0),crArgNul(),crArgPos($$.n ,$$.d));
                                 }
     ;
 
 expreAd : expreMul
     | expreAd opAd expreMul     {
-                                    $$.t = T_ERROR;
-                                    if(($1.t == T_ENTERO) && ($3.t == T_ENTERO)) $$.t = T_ENTERO;
-                                    else {yyerror("Error en expresion aditiva.");}
-
+                                    $$.t = T_ENTERO;
+                                    if ($1.t != $3.t || $1.t == T_ERROR|| $3.t == T_ERROR  ) 
+                                    {yyerror("Error en expresion aditiva.");$$.t =T_ERROR;}
+                                    $$.n = niv;
                                     $$.d = creaVarTemp();
-                                    emite($2, crArgPos(niv, $1.d), crArgPos(niv, $3.d), crArgPos(niv, $$.d));
+                                    emite($2, crArgPos($1.n, $1.d), crArgPos($3.n, $3.d), crArgPos($$.n, $$.d));
                                 }
 
 expreMul : expreUna             
     | expreMul opMul expreUna   {
-                                    $$.t = T_ERROR;
-                                    if(($1.t == T_ENTERO) && ($3.t == T_ENTERO)) $$.t = T_ENTERO;
-                                    else {yyerror("Error en expresion multiplicativa.");}
-
+                                    $$.t = T_ENTERO;
+                                    if ($1.t != $3.t || $1.t != T_ENTERO|| $3.t != T_ENTERO  ) 
+                                    {yyerror("Error en expresion multiplicativa.");$$.t =T_ERROR; }
+                                    $$.n = niv;
                                     $$.d = creaVarTemp();
-                                    emite($2, crArgPos(niv, $1.d), crArgPos(niv, $3.d), crArgPos(niv, $$.d));
+                                    emite($2, crArgPos($1.n, $1.d), crArgPos($3.n, $3.d), crArgPos($$.n, $$.d));
                                 }
     ;
 
 expreUna : expreSufi 
-    | opUna expreUna            {$$.t = T_LOGICO; if($2.t != T_LOGICO) {yyerror("Error en la expresión unaria.");$$.t=T_ERROR;}}
+    | opUna expreUna            {
+                                if($1 == 100){$$.t = T_LOGICO;}      
+                                else{$$.t = T_ENTERO;}                 
+                                if($2.t != $$.t) {yyerror("Error en la expresión unaria.");$$.t=T_ERROR;}
+                                $$.d = creaVarTemp();
+                                $$.n = niv;
+                                if($1 == 99){
+                                    emite(ESIG,crArgPos($2.n,$2.d),crArgNul(),crArgPos($$.n,$$.d));
+                                }
+                                else if($1 == 98){
+                                    emite(ESUM,crArgPos($2.n,$2.d),crArgEnt(0),crArgPos($$.n,$$.d));
+                                }
+                                else{
+                                    emite(EASIG,crArgEnt(0),crArgNul(),crArgPos($$.n,$$.d));
+                                    emite(EDIST, crArgPos($2.n, $2.d), crArgEnt(0), crArgEtq(si+2));
+                                    emite(EASIG,crArgEnt(1),crArgNul(),crArgPos($$.n,$$.d));
+                                }
+                                }
     ;
 
 expreSufi : const
@@ -413,11 +459,11 @@ paramAct :          {$$ = insTdD(-1,T_VACIO);}
     ;
 
 listParamAct : expre    {   $$ = insTdD(-1,$1.t);
-                            emite(EPUSH,crArgNul(),crArgNul(),crArgNul($1.d));
+                            emite(EPUSH,crArgNul(),crArgNul(),crArgPos($1.n,$1.d));
                         }
-    | expre COMA_ listParamAct {
-            $$ = insTdD($3,$1.t);
-            emite(EPUSH,crArgNul(),crArgNul(),crArgNul($1.d));
+    | expre COMA_ {emite(EPUSH,crArgNul(),crArgNul(),crArgPos($1.n,$1.d));} listParamAct {
+            $$ = insTdD($4,$1.t);
+            
     }
     ;
 
@@ -443,9 +489,9 @@ opMul : MULT_ {$$ = EMULT ;}
     | DIV_ {$$ = EDIVI ;}
     ;
 
-opUna : SUM_ {$$ = ESUM ;}
-    | RES_ {$$ = EDIF ;}
-    | DIF_ {$$ = ESIG ;}
+opUna : SUM_ {$$ = 98 /* Nos hemos inventado un codigo para las operaciones unarias ya que no corresponden a una operacion directamente */ ;}
+    | RES_ {$$ = 99 ;}
+    | DIF_ {$$ = 100 ;}
     ;
 
 %%
